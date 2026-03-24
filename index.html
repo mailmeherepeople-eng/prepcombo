@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PrepCombo</title>
+    <style>
+        :root { --bg:#eef2f7; --surface:#e2e8f0; --surface2:#ffffff; --card-border:#cbd5e1; --accent:#3b82f6; --gold:#d97706; --text-primary:#1e293b; --text-secondary:#64748b; }
+        * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; padding:0; }
+        .card, .bucket, .start-btn, .ob-btn { user-select:none; -webkit-user-select:none; }
+        body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text-primary); display:flex; flex-direction:column; height:100dvh; overflow:hidden; }
+
+        /* SPLASH */
+        #splash-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:20000; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
+        #splash-screen h1 { font-size:3rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:6px; }
+        #splash-screen h1 span.p1 { color:#ffffff; }
+        #splash-screen h1 span.p2 { color:var(--gold); }
+        #splash-screen .splash-sub { color:#64748b; font-size:0.9rem; margin-bottom:60px; font-style:italic; }
+        #splash-screen .tap-play { color:#ffffff; font-size:1rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; animation:pulseText 1.4s ease infinite; }
+        @keyframes pulseText { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+        #splash-screen .training-link { position:absolute; bottom:40px; color:#475569; font-size:0.8rem; cursor:pointer; text-decoration:underline; background:none; border:none; }
+
+        /* ONBOARDING */
+        #onboarding-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:12000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:26px; text-align:center; overflow-y:auto; }
+        #onboarding-screen h1 { color:var(--gold); font-size:1.8rem; margin-bottom:4px; line-height:1.15; }
+        #onboarding-screen .sub { color:var(--accent); font-size:0.9rem; margin-bottom:20px; font-style:italic; }
+        .ob-steps { background:var(--surface2); border-radius:14px; border:1px solid var(--card-border); padding:18px 20px; max-width:340px; width:100%; margin-bottom:20px; text-align:left; }
+        .ob-step { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; }
+        .ob-step:last-child { margin-bottom:0; }
+        .ob-num { background:var(--gold); color:#fff; font-size:0.7rem; font-weight:900; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+        .ob-step p { font-size:0.83rem; color:var(--text-secondary); line-height:1.5; margin:0; }
+        .ob-step strong { color:var(--text-primary); }
+        .ob-btn { padding:14px 38px; font-size:1rem; background:var(--gold); border:none; border-radius:12px; font-weight:900; cursor:pointer; color:#fff; box-shadow:0 4px 16px rgba(217,119,6,0.35); margin-bottom:10px; display:block; width:100%; max-width:340px; }
+        .ob-skip-btn { background:none; border:none; color:var(--text-secondary); font-size:0.8rem; cursor:pointer; text-decoration:underline; padding:4px 8px; }
+
+        /* TRAINING INTERFACE */
+        #training-interface { display:none; flex-direction:column; height:100dvh; width:100%; position:fixed; top:0; left:0; z-index:12000; background:var(--bg); }
+
+        /* GUIDE OVERLAY */
+        #guide-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:13000; pointer-events:none; }
+        #guide-spotlight { position:fixed; border-radius:12px; box-shadow:0 0 0 9999px rgba(15,23,42,0.75); border:2.5px solid var(--gold); pointer-events:none; z-index:13000; transition:all 0.3s ease; }
+        #guide-tooltip { position:fixed; left:50%; transform:translateX(-50%); background:#1e293b; color:#f8fafc; font-size:0.82rem; font-weight:700; line-height:1.5; padding:12px 16px; border-radius:12px; border:2px solid var(--gold); max-width:260px; text-align:center; z-index:13001; pointer-events:none; box-shadow:0 4px 20px rgba(0,0,0,0.4); white-space:pre-line; }
+        #guide-tooltip .finger { display:block; font-size:1.3rem; margin-top:5px; animation:fingerBounce 0.65s ease infinite alternate; }
+        @keyframes fingerBounce { 0%{transform:translateY(0);} 100%{transform:translateY(7px);} }
+
+        /* TRAINING COMPLETE */
+        #training-complete { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.96); z-index:14000; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
+        #training-complete h1 { color:var(--gold); font-size:2.2rem; margin-bottom:10px; }
+        #training-complete p { color:#94a3b8; font-size:0.95rem; margin-bottom:24px; line-height:1.6; max-width:320px; }
+
+        /* START SCREEN */
+        #start-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:26px; text-align:center; overflow-y:auto; }
+        #start-screen h1 { color:var(--gold); font-size:2rem; margin-bottom:6px; line-height:1.15; }
+        .tagline { color:var(--accent); font-size:0.92rem; margin-bottom:22px; font-style:italic; }
+        .how-to-box { background:var(--surface2); padding:16px 18px; border-radius:14px; border:1px solid var(--card-border); max-width:460px; text-align:left; line-height:1.7; margin-bottom:24px; width:100%; }
+        .how-to-box h3 { color:var(--gold); margin-bottom:8px; font-size:0.95rem; }
+        .how-to-box li { font-size:0.83rem; color:var(--text-secondary); margin-bottom:4px; }
+        .how-to-box strong { color:var(--text-primary); }
+        .start-btn { padding:15px 42px; font-size:1.05rem; background:var(--gold); border:none; border-radius:12px; font-weight:900; cursor:pointer; color:#fff; box-shadow:0 4px 18px rgba(217,119,6,0.4); letter-spacing:0.03em; }
+
+        /* SIDEBAR */
+        #sidebar { width:100%; height:56px; background:var(--surface2); border-bottom:1px solid var(--card-border); padding:5px 8px; overflow-x:auto; display:flex; align-items:center; gap:6px; flex-shrink:0; }
+        .history-item { min-width:100px; background:#f1f5f9; padding:4px 6px; border-radius:6px; font-size:0.58rem; border-left:3px solid var(--accent); color:var(--text-primary); white-space:nowrap; flex-shrink:0; }
+        #main { flex:1; padding:7px 8px 4px; display:flex; flex-direction:column; align-items:center; overflow:hidden; gap:5px; }
+        .stats-bar { width:100%; display:grid; background:var(--surface2); padding:7px 4px; border-radius:12px; border:1px solid var(--card-border); flex-shrink:0; }
+        .stat-item { font-size:0.55rem; text-align:center; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
+        .stat-val { color:var(--text-primary); font-size:1rem; display:block; font-weight:900; line-height:1.1; }
+        #score-val { color:var(--gold); } #streak-val { color:#ef4444; }
+        #message { min-height:26px; font-size:0.78rem; color:var(--accent); font-weight:700; text-align:center; width:100%; flex-shrink:0; transition:color 0.2s; }
+        #message.wrong { color:#ef4444; animation:msgShake 0.4s ease; }
+        @keyframes msgShake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+
+        /* POOL */
+        #community-pool { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:var(--surface); padding:9px; border-radius:14px; width:100%; overflow-y:auto; flex:1; border:1px solid var(--card-border); }
+
+        /* CARD SYSTEM
+           Default: front face visible (emoji + name)
+           Flipped (long press): back face visible (hint)
+           Selected: gold border on whichever face is showing
+        */
+        .card { height:72px; cursor:pointer; perspective:600px; position:relative; }
+        .card.hidden { visibility:hidden; pointer-events:none; }
+        .card-inner { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); border-radius:10px; }
+        .card.flipped .card-inner { transform:rotateY(180deg); }
+        .card-face { position:absolute; width:100%; height:100%; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:5px; border:1.5px solid var(--card-border); transition:border-color 0.15s, box-shadow 0.15s; }
+
+        /* FRONT — emoji + name, default visible */
+        .card-front-face { background:#f5f0e8; }
+        .card-front-face .ce { font-size:22px; line-height:1; }
+        .card-front-face .cn { font-size:0.6rem; font-weight:700; color:var(--text-primary); text-align:center; line-height:1.15; padding:0 2px; }
+
+        /* BACK — hint text + name, shown after long press */
+        .card-back-face { transform:rotateY(180deg); background:#1e3a5f; padding:6px; justify-content:space-between; }
+        .card-back-face .hint-text { font-size:0.52rem; font-weight:600; color:#e2eaf5; text-align:center; line-height:1.4; flex:1; display:flex; align-items:center; justify-content:center; }
+        .card-back-face .cn { font-size:0.58rem; font-weight:800; color:#94b8d8; text-align:center; line-height:1.1; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); width:100%; }
+
+        /* Long press progress ring */
+        .card-press-ring { position:absolute; inset:-3px; border-radius:13px; pointer-events:none; z-index:2; }
+        .card-press-ring circle { fill:none; stroke:var(--gold); stroke-width:3; stroke-dasharray:0 200; stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dasharray 0.05s linear; }
+
+        /* Selected = gold ring */
+        .card.selected .card-face { border-color:var(--gold); box-shadow:0 0 0 2px var(--gold),0 3px 10px rgba(217,119,6,0.3); }
+
+        /* Wrong shake */
+        .card.wrong-shake { animation:cardShake 0.45s ease; }
+        @keyframes cardShake { 0%,100%{transform:translateX(0);} 15%{transform:translateX(-7px);} 35%{transform:translateX(7px);} 55%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
+
+        /* Combo hint teal glow */
+        .card.combo-hint .card-face { border-color:#0ea5e9 !important; box-shadow:0 0 0 2px #0ea5e966 !important; }
+
+        /* TIMER */
+        #timer-bar-wrap { width:100%; height:7px; background:var(--surface); border-radius:4px; overflow:hidden; flex-shrink:0; }
+        #timer-bar { height:100%; width:100%; border-radius:4px; background:#4f9e72; transition:width 0.25s linear,background 0.5s linear; }
+        #timer-bar.warn { background:#d97706; } #timer-bar.danger { background:#ef4444; }
+
+        /* SUBMIT HINT */
+        #submit-hint { font-size:0.68rem; color:var(--text-secondary); text-align:center; flex-shrink:0; min-height:18px; font-weight:600; }
+        #bonus-pill { display:none; font-size:0.63rem; font-weight:800; background:#4f9e72; color:#fff; padding:2px 7px; border-radius:20px; margin-left:5px; transition:background 0.5s; vertical-align:middle; }
+        #bonus-pill.warn { background:#d97706; } #bonus-pill.danger { background:#ef4444; }
+
+        /* BUCKETS */
+        #buckets { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; width:100%; flex-shrink:0; }
+        .bucket { border-radius:8px; padding:8px 2px; cursor:pointer; font-weight:800; font-size:0.56rem; text-align:center; text-transform:uppercase; letter-spacing:0.02em; color:#fff; border:none; transition:transform 0.1s,filter 0.1s; opacity:0.5; }
+        .bucket.active { opacity:1; } .bucket:active { transform:scale(0.92); }
+        .bucket.pulse-green { animation:bucketPulse 0.5s ease; }
+        @keyframes bucketPulse { 0%{filter:brightness(1);} 50%{filter:brightness(1.4);box-shadow:0 0 0 6px rgba(34,197,94,0.35);} 100%{filter:brightness(1);box-shadow:none;} }
+
+        /* SCORE POP */
+        .score-pop { position:fixed; font-size:1.35rem; font-weight:900; pointer-events:none; z-index:5000; text-shadow:0 2px 6px rgba(0,0,0,0.15); animation:scorePop 1s ease forwards; }
+        .score-pop.good { color:var(--gold); } .score-pop.bad { color:#ef4444; font-size:1rem; }
+        @keyframes scorePop { 0%{opacity:1;transform:translateY(0) scale(1);} 60%{opacity:1;transform:translateY(-52px) scale(1.25);} 100%{opacity:0;transform:translateY(-80px) scale(0.9);} }
+
+        /* STREAK BANNER */
+        #streak-banner { display:none; position:fixed; top:68px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#ef4444,#f97316); color:#fff; font-size:0.95rem; font-weight:900; padding:9px 22px; border-radius:28px; z-index:6000; white-space:nowrap; box-shadow:0 4px 16px rgba(239,68,68,0.4); animation:streakPop 0.35s cubic-bezier(.4,2,.6,1); }
+        @keyframes streakPop { 0%{opacity:0;transform:translateX(-50%) scale(0.5);} 100%{opacity:1;transform:translateX(-50%) scale(1);} }
+
+        /* CONFETTI */
+        .confetti-piece { position:fixed; top:-12px; pointer-events:none; z-index:9998; border-radius:2px; animation:confettiFall linear forwards; }
+        @keyframes confettiFall { 0%{transform:translateY(0) rotate(0deg);opacity:1;} 100%{transform:translateY(110vh) rotate(720deg);opacity:0;} }
+
+        /* ROUND SPLASH */
+        #round-splash { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.93); z-index:8000; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+        #round-splash h1 { color:var(--gold); font-size:2.8rem; margin-bottom:6px; } #round-splash p { color:#94a3b8; font-size:0.95rem; }
+
+        /* HOUSE MODAL */
+        #house-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.96); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; overflow-y:auto; }
+        #house-modal h1 { color:var(--gold); margin-bottom:10px; font-size:1.5rem; }
+        #house-gif { width:100%; max-width:280px; border-radius:14px; border:3px solid var(--gold); margin-bottom:14px; }
+        #treasure-display { color:#fff; font-size:0.9rem; line-height:1.6; max-width:460px; margin-bottom:16px; }
+
+        /* RESULT SCREEN */
+        #result-screen { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:11000; flex-direction:column; align-items:center; justify-content:flex-start; padding:20px; text-align:center; overflow-y:auto; gap:12px; }
+        #result-screen h1 { color:var(--gold); font-size:2rem; flex-shrink:0; }
+        #final-rank-box { background:var(--surface2); padding:20px 22px; border-radius:20px; border:2px solid var(--gold); width:90%; max-width:370px; flex-shrink:0; }
+        #round-summary { width:90%; max-width:370px; display:flex; flex-direction:column; gap:8px; flex-shrink:0; }
+        .summary-round { background:var(--surface2); border-radius:12px; padding:12px 14px; border:1px solid var(--card-border); text-align:left; }
+        .summary-round h4 { font-size:0.7rem; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+        .summary-play { display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:0.73rem; }
+        .sp-bucket { font-weight:800; min-width:78px; font-size:0.68rem; }
+        .sp-cards { color:var(--text-secondary); flex:1; font-size:0.65rem; }
+        .sp-badge { font-size:0.58rem; font-weight:800; padding:2px 6px; border-radius:10px; white-space:nowrap; }
+        .badge-hod { background:#fef3c7; color:#92400e; } .badge-good { background:#dcfce7; color:#166534; }
+        .badge-ok { background:#f1f5f9; color:#475569; } .badge-miss { background:#fee2e2; color:#991b1b; }
+    </style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash-screen">
+    <h1><span class="p1">Prep</span><span class="p2">Combo</span></h1>
+    <p class="splash-sub">"Making it stick should be fun"</p>
+    <button onclick="getCtx(); goToStartScreen();" style="background:none;border:none;cursor:pointer;padding:20px 40px;">
+        <p class="tap-play">Tap to play</p>
+    </button>
+</div>
+
+<!-- ONBOARDING SCREEN -->
+<div id="onboarding-screen">
+    <h1>HOW TO PLAY</h1>
+    <p class="sub">PrepCombo — clinical combos against the clock</p>
+    <div class="ob-steps">
+        <div class="ob-step"><span class="ob-num">1</span><p><strong>Double tap a card</strong> to select it. A gold border appears. Double tap again to deselect.</p></div>
+        <div class="ob-step"><span class="ob-num">2</span><p><strong>Long press a card</strong> to flip it and read its clinical hint.</p></div>
+        <div class="ob-step"><span class="ob-num">3</span><p><strong>Select exactly 3 cards</strong>, then tap the right Specialty Bucket.</p></div>
+        <div class="ob-step"><span class="ob-num">4</span><p><strong>Match 3 cards with the same hidden tag</strong> to unlock HOD Status and a Medical Treasure.</p></div>
+        <div class="ob-step"><span class="ob-num">5</span><p><strong>3 turns per round. 3 rounds. 60 seconds per round.</strong> Card colours appear in the last turn as a hint.</p></div>
+    </div>
+    <div class="ob-steps" style="margin-bottom:20px;">
+        <div class="ob-step" style="margin-bottom:0;"><span class="ob-num" style="background:var(--accent);">$</span><p><strong>Scoring:</strong> correct bucket placements earn points. A 3-card tag match multiplies your score by 20x. The faster you submit, the more speed bonus points you earn on top. Streaks of good combos are tracked and rewarded.</p></div>
+    </div>
+    <button class="ob-btn" onclick="startTraining()">START TRAINING</button>
+    <button class="ob-skip-btn" id="skip-training-btn" style="display:none;" onclick="skipTraining()">Skip — go straight to game</button>
+</div>
+
+<!-- TRAINING INTERFACE -->
+<div id="training-interface">
+    <div style="width:100%;height:56px;background:var(--surface2);border-bottom:1px solid var(--card-border);padding:5px 8px;overflow-x:auto;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <span style="font-size:0.7rem;font-weight:700;color:var(--accent);white-space:nowrap;">TRAINING MODE</span>
+    </div>
+    <div style="flex:1;padding:7px 8px 4px;display:flex;flex-direction:column;align-items:center;overflow:hidden;gap:5px;">
+        <div class="stats-bar" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="stat-item">TURN<span class="stat-val" id="t-turn-num">1</span>/3</div>
+            <div class="stat-item">TRAINING<span class="stat-val" style="color:var(--accent);">MODE</span></div>
+            <div class="stat-item">SCORE<span class="stat-val" id="t-score-val" style="color:var(--gold);">0</span></div>
+        </div>
+        <div id="t-message" style="min-height:26px;font-size:0.78rem;color:var(--accent);font-weight:700;text-align:center;width:100%;flex-shrink:0;">Follow the prompts...</div>
+        <div id="t-pool" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--surface);padding:9px;border-radius:14px;width:100%;overflow-y:auto;flex:1;border:1px solid var(--card-border);"></div>
+        <div id="t-hint" style="font-size:0.68rem;color:var(--text-secondary);text-align:center;flex-shrink:0;min-height:18px;font-weight:600;">Double tap a card to select it</div>
+        <div id="t-buckets" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;width:100%;flex-shrink:0;"></div>
+    </div>
+</div>
+
+<!-- GUIDE OVERLAY -->
+<div id="guide-overlay">
+    <div id="guide-spotlight"></div>
+    <div id="guide-tooltip">Double tap any card to select it<span class="finger">👆</span></div>
+</div>
+
+<!-- TRAINING COMPLETE -->
+<div id="training-complete">
+    <h1>TRAINING COMPLETE!</h1>
+    <p>You know how it works.<br>Now it's time for the real thing.</p>
+    <button class="ob-btn" style="max-width:280px;" onclick="beginRealGame()">BEGIN ROTATION</button>
+</div>
+
+<!-- START SCREEN -->
+<div id="start-screen">
+    <h1>PrepCombo</h1>
+    <p class="tagline">"Making it stick should be fun"</p>
+    <div style="background:var(--surface2);border-radius:14px;border:1px solid var(--card-border);padding:20px 22px;max-width:340px;width:100%;margin-bottom:24px;text-align:center;">
+        <p style="font-size:1.1rem;font-weight:900;color:var(--text-primary);line-height:1.4;margin-bottom:10px;">Can you get the highest score before the clock runs out?</p>
+        <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:14px;">Match cards by specialty. Unlock combos. Beat the timer. The faster you play, the more points you earn.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+            <div style="background:var(--surface);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:1.4rem;">⏱️</div>
+                <div style="font-size:0.62rem;font-weight:700;color:var(--text-secondary);margin-top:4px;">60 SECONDS</div>
+            </div>
+            <div style="background:var(--surface);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:1.4rem;">🃏</div>
+                <div style="font-size:0.62rem;font-weight:700;color:var(--text-secondary);margin-top:4px;">3 ROUNDS</div>
+            </div>
+            <div style="background:var(--surface);border-radius:10px;padding:10px 6px;">
+                <div style="font-size:1.4rem;">🏆</div>
+                <div style="font-size:0.62rem;font-weight:700;color:var(--text-secondary);margin-top:4px;">HOD STATUS</div>
+            </div>
+        </div>
+    </div>
+    <button class="start-btn" style="background:var(--surface2);color:var(--gold);border:2px solid var(--gold);box-shadow:none;margin-bottom:12px;" onclick="goToTraining()">HOW TO PLAY</button>
+    <button class="start-btn" onclick="startGame()">START ROTATION</button>
+</div>
+
+<!-- GAME INTERFACE -->
+<div id="game-interface" style="display:none;flex-direction:column;height:100dvh;width:100%;">
+    <div id="sidebar"><div id="history-list" style="display:contents;"></div></div>
+    <div id="main">
+        <div class="stats-bar" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;">
+            <div class="stat-item">ROUND<span class="stat-val" id="round-num">1</span>/3</div>
+            <div class="stat-item">TURNS<span class="stat-val" id="turn-num">3</span></div>
+            <div class="stat-item">SCORE<span class="stat-val" id="score-val">0</span></div>
+            <div class="stat-item">STREAK<span class="stat-val" id="streak-val" style="color:#ef4444;">0🔥</span></div>
+            <div class="stat-item">TIME<span class="stat-val" id="timer-val" style="color:#4f9e72;">60</span></div>
+        </div>
+        <div id="message">Double tap to select. Long press for a hint.</div>
+        <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
+        <div id="community-pool"></div>
+        <div id="submit-hint">Double tap cards to select <span id="bonus-pill">+0 speed</span></div>
+        <div id="buckets"></div>
+    </div>
+</div>
+
+<div id="round-splash"><h1 id="splash-title">ROUND 2</h1><p id="splash-sub">New cards. Stay sharp.</p></div>
+
+<div id="house-modal">
+    <h1>HOD STATUS UNLOCKED</h1>
+    <img id="house-gif" src="" alt="">
+    <div id="treasure-display"></div>
+    <button onclick="closeHouseModal()" style="padding:12px 28px;background:var(--gold);border:none;border-radius:10px;font-weight:900;cursor:pointer;font-size:0.95rem;color:#fff;">CONTINUE</button>
+</div>
+
+<div id="result-screen">
+    <h1>ROTATION COMPLETE</h1>
+    <div id="final-rank-box">
+        <h2 id="rank-title" style="color:var(--accent);margin:0;font-size:1.5rem;"></h2>
+        <p id="rank-flavor" style="color:var(--text-secondary);font-style:italic;margin:8px 0;font-size:0.85rem;"></p>
+        <div style="font-size:2.2rem;color:var(--text-primary);font-weight:900;margin:12px 0;">
+            <span id="final-score-val">0</span><small style="font-size:0.7rem;color:var(--gold);font-weight:700;"> PTS</small>
+        </div>
+    </div>
+    <div id="round-summary"></div>
+    <button onclick="shareScore()" style="padding:13px 36px;background:#25d366;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:0.95rem;color:#fff;flex-shrink:0;width:90%;max-width:370px;">SHARE WITH FRIENDS 📤</button>
+    <button onclick="location.reload()" style="padding:13px 36px;background:var(--gold);border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:0.95rem;color:#fff;flex-shrink:0;width:90%;max-width:370px;">PLAY AGAIN</button>
+</div>
+
+<div id="streak-banner"></div>
+
+<script>
+// ============================================================
+// DEVELOPER HANDOFF HOOK
+// window.onPrepComboEnd = (result) => {
+//   fetch('/api/scores', { method:'POST', body:JSON.stringify(result) });
+// };
+// result = { score, rank, plays, timestamp }
+// ============================================================
+
+// AUDIO
+const AudioCtx=window.AudioContext||window.webkitAudioContext;
+let audioCtx=null;
+function getCtx(){if(!audioCtx)audioCtx=new AudioCtx();return audioCtx;}
+function playTone(freq,type,dur,vol,delay=0){try{const ctx=getCtx(),osc=ctx.createOscillator(),g=ctx.createGain();osc.connect(g);g.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;const t=ctx.currentTime+delay;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);osc.start(t);osc.stop(t+dur);}catch(e){}}
+function sndSelect()  { playTone(520,'sine',0.07,0.2); }
+function sndDeselect(){ playTone(300,'sine',0.07,0.14); }
+function sndFlip()    { playTone(380,'sine',0.1,0.15); playTone(520,'sine',0.08,0.1,0.08); }
+function sndSubmit()  { [523,659,784].forEach((f,i)=>playTone(f,'sine',0.15,0.2-i*0.03,i*0.06)); }
+function sndWrong()   { playTone(220,'sine',0.15,0.3);playTone(160,'sine',0.15,0.25,0.12); }
+function sndHOD()     { [523,659,784,1047].forEach((f,i)=>playTone(f,'sine',0.4,0.25,i*0.12)); }
+function sndStreak()  { playTone(660,'sawtooth',0.18,0.2);playTone(880,'sawtooth',0.18,0.18,0.1); }
+function sndRound()   { playTone(180,'sine',0.3,0.4);playTone(360,'sine',0.2,0.25,0.2); }
+function sndVictory() { [392,523,659,784,1047].forEach((f,i)=>playTone(f,'sine',0.5,0.28,i*0.14)); }
+function sndError()   { playTone(160,'square',0.12,0.15); }
+
+function haptic(p){if(navigator.vibrate)navigator.vibrate(p);}
+const H_TAP=10,H_SELECT=20,H_SUBMIT=[30,20,50],H_WRONG=[50,30,50,30,50],H_HOD=[60,40,60,40,80],H_ERROR=[20,15,20];
+
+const subjects=["Cardiology","Neurology","Psychiatry","Surgery","OBG","Pediatrics","Dermatology","Anesthesia","ENT","Ophtho","Ortho","Forensics","Pharmacology","Pathology","Micro","Anatomy"];
+const bucketColors={"Cardiology":"#c0626a","Neurology":"#7165a8","Psychiatry":"#8b63a3","Surgery":"#4a80a0","OBG":"#b8608a","Pediatrics":"#4f9e72","Dermatology":"#b08040","Anesthesia":"#3d8f8a","ENT":"#b07038","Ophtho":"#5078b8","Ortho":"#8f6e4a","Forensics":"#607080","Pharmacology":"#3d8a60","Pathology":"#a05858","Micro":"#3d7060","Anatomy":"#4060a8"};
+const tagColors={"Skin":"#a06840","Ballistics":"#5a6070","Death":"#3a4050","Anesthesia":"#3d8a80","Heart":"#a85060","Neuro":"#5a559a","Blood":"#8a4040","Psych":"#7858a0","Lung":"#3d7858","Pregnancy":"#8a5080","Labor":"#a06048","Diabetes":"#4a8860","Jaundice":"#8a7030","Skull":"#505868","Ear":"#4070a0","Bone":"#8a7048","Vision":"#3860a0","Leg":"#3a7850","Balance":"#3a4888","Eye":"#3055a0","CNS":"#783838","Bacteria":"#286848","Poison":"#4a6828","Dopamine Seesaw":"#683888","Muscle Relax":"#7a5820"};
+
+const treasures={"Skin":"The ABCDE of Melanoma: Asymmetry, Border, Colour, Diameter, Evolving. Following Langer's Lines ensures minimal tension on wound edges for superior healing.","Ballistics":"Rifling imparts gyroscopic stability to bullets. Tattooing — unburnt gunpowder in skin — lets forensic experts estimate range of fire to within centimetres.","Death":"The Post-Mortem Triad: Algor Mortis (cooling), Rigor Mortis (ATP stiffening), Livor Mortis (blood settling). Pillars of the Henssge Nomogram for time-of-death estimation.","Heart":"Impulses from the SA Node propagate through the Myocardium. Time is Muscle. Cardiomyocytes cannot regenerate once infarcted.","Lung":"Gas exchange at the Alveoli via passive diffusion. Without Surfactant from Type II pneumocytes, neonates develop Respiratory Distress Syndrome.","Neuro":"Motor fibres from the Frontal Lobe decussate in the Medullary Pyramids. Left hemisphere stroke causes right-sided hemiplegia.","Labor":"Oxytocin triggers contractions. Ergotamine manages PPH by sustaining uterine contraction.","Ear":"The Ossicular Chain (Malleus, Incus, Stapes) amplifies sound pressure 22x to bridge air and cochlear fluid.","Bacteria":"Gram staining reveals Peptidoglycan thickness. Penicillin and Vancomycin both target cell wall synthesis by different mechanisms.","Psych":"Mesolimbic overactivity causes Schizophrenia. Nigrostriatal destruction causes Parkinsonism.","Anesthesia":"General Anaesthesia requires Hypnosis, Analgesia, and Muscle Relaxation (e.g. Succinylcholine).","Diabetes":"Insulin activates GLUT4. Metformin reduces hepatic glucose output and boosts sensitivity.","Poison":"Cyanide blocks Cytochrome C Oxidase. Atropine blocks muscarinic receptors, reversing SLUDGE syndrome in organophosphate poisoning.","Vision":"Light: Cornea, Lens, Retina. Glaucoma is the Silent Thief of Sight. IOP silently damages the Optic Nerve.","CNS":"The BBB is so restrictive that CSF via Lumbar Puncture is the only way to confirm Meningitis.","Bone":"Osteoblasts build, Osteoclasts clear. Callus is the first sign of fracture healing.","Skull":"Fontanelles allow moulding during birth. Craniosynostosis restricts brain growth and needs surgical release.","Pregnancy":"HCG sustains the corpus luteum. Amniotic Fluid volume is a key indicator of fetal wellbeing.","Blood":"Heparin acts immediately. Warfarin takes days (inhibits Vit K). Aspirin is antiplatelet, not anticoagulant.","Jaundice":"Unconjugated bilirubin crosses the BBB causing Kernicterus. Phototherapy isomerises bilirubin for excretion.","Dopamine Seesaw":"Mesolimbic dopamine drives reward. Nigrostriatal dopamine drives movement. Deplete the latter and Parkinsonism follows.","Muscle Relax":"Succinylcholine is depolarising. Curare and Pancuronium are non-depolarising. They block without activating the nicotinic receptor."};
+
+// ============================================================
+// CARD HINTS MAP — shown on back face after long press
+// ============================================================
+const cardHints = {
+    "Langer's Lines":    "Cut along these lines. Scars heal thin, not wide",
+    "Melanoma":          "ABCDE: Asymmetry, Border, Colour, Diameter, Evolving",
+    "Skin Graft":        "Donor skin transplanted to replace damaged tissue",
+    "Exit Wound":        "Larger than entry. Bullet tumbles and expands on exit",
+    "Rifling":           "Barrel grooves spin the bullet. Leaves unique tool marks",
+    "Tattooing":         "Unburnt powder in skin. Estimates firing range precisely",
+    "Rigor Mortis":      "ATP runs out so muscles lock. Peaks at 12 hours",
+    "Algor Mortis":      "Body cools ~1C/hr. Your thermometer is a clock",
+    "Livor Mortis":      "Blood pools downward. Fixed after 6 hours",
+    "Propofol":          "Milk of amnesia. Fast in, fast out, no hangover",
+    "Lidocaine":         "Blocks Na+ channels. Numbs locally, also treats arrhythmia",
+    "Intubation":        "Tube past cords. Secures airway, bypasses obstruction",
+    "Suture":            "Wound edges approximated. Tension determines scar quality",
+    "Keloid":            "Scar grows beyond wound edges. Collagen gone rogue",
+    "Biopsy":            "Tissue sample for histology. Diagnosis lives here",
+    "Hematoma":          "Blood trapped in tissue. Pressure can be deadly",
+    "Abrasion":          "Superficial scrape. Direction of force visible in pattern",
+    "Contusion":         "Bruise without broken skin. Blunt force, intact dermis",
+    "SA Node":           "Natural pacemaker. Fires 60-100 bpm without being asked",
+    "Troponin":          "Rises 3-4 hrs after MI. The gold standard marker",
+    "Myocardium":        "Heart muscle. Dead cells don't regenerate, ever",
+    "Frontal Lobe":      "Personality, decisions, motor output. All from here",
+    "Cerebellum":        "Coordinates movement. Damage causes ataxia, not paralysis",
+    "Brainstem":         "Controls breathing, heart rate, consciousness. Damage is fatal",
+    "Warfarin":          "Blocks Vit K clotting factors. INR is your guide",
+    "Heparin":           "Activates antithrombin III. Works immediately, IV only",
+    "Aspirin":           "Irreversibly blocks COX-1. Platelets affected for life",
+    "Schizophrenia":     "Excess mesolimbic dopamine causing hallucinations and delusions",
+    "Dopamine":          "Too much causes psychosis. Too little causes Parkinson's",
+    "Serotonin":         "Low levels linked to depression. SSRIs keep it around longer",
+    "Alveoli":           "Tiny air sacs with 70m2 of surface area for gas exchange",
+    "Bronchioles":       "No cartilage here. Smooth muscle spasm causes asthma attack",
+    "Salbutamol":        "B2 agonist. Relaxes bronchial muscle fast. Blue inhaler",
+    "Amiodarone":        "Last resort antiarrhythmic. Works but side effects are brutal",
+    "Digoxin":           "Slows AV node, strengthens contraction. Very narrow window",
+    "Mitral Valve":      "Left heart, between atrium and ventricle. Most commonly diseased",
+    "Amniotic Fluid":    "Cushions the fetus. Volume reflects fetal kidney function",
+    "Placenta":          "Fetal lifeline. Gas, nutrients, waste, hormones all pass here",
+    "HCG":               "Produced by trophoblast. Keeps corpus luteum alive early on",
+    "Surfactant":        "Reduces alveolar surface tension. Absent before 28 weeks",
+    "Apgar Score":       "0-10 at 1 and 5 min. Below 7 needs attention fast",
+    "Meconium":          "First stool in amniotic fluid. A fetal distress signal",
+    "Oxytocin":          "Triggers contractions and bonding. Also used to induce labor",
+    "Cervical Dilation": "0 to 10cm. Active labor starts at 4cm",
+    "Ergotamine":        "Contracts uterus post-delivery. Stops PPH bleeding",
+    "Insulin":           "Key that unlocks GLUT4. Opens cells to glucose",
+    "Glucagon":          "Opposite of insulin. Raises blood sugar from liver stores",
+    "Metformin":         "First-line T2DM. Cuts liver glucose output, no weight gain",
+    "Bilirubin":         "Haemoglobin breakdown product. Crosses BBB in neonates",
+    "Phototherapy":      "Blue light isomerises bilirubin. Makes it water-soluble",
+    "Kernicterus":       "Bilirubin damages basal ganglia. Irreversible brain damage",
+    "Fontanelle":        "Soft spot allows brain growth. Closes by 18 months",
+    "Craniosynostosis":  "Sutures fuse too early. Skull can't expand with brain",
+    "Molding":           "Skull deforms to fit birth canal. Resolves within days",
+    "Stapes":            "Smallest bone in the body. Transmits vibration to cochlea",
+    "Incus":             "Middle ossicle. The anvil that links malleus to stapes",
+    "Malleus":           "Attached to eardrum. First bone vibration hits",
+    "Osteoblasts":       "Bone builders. Lay down new matrix, activated by PTH",
+    "Osteoclasts":       "Bone breakers. Resorb old bone, also activated by PTH",
+    "Callus":            "Soft cartilage bridge forms first. Then hardens to bone",
+    "Cataract":          "Lens clouds over. Painless, progressive, curable with surgery",
+    "Glaucoma":          "High IOP silently destroys optic nerve. Check before it's too late",
+    "Retinal Detachment":"Retina peels from back of eye. Curtain descends across vision",
+    "Femur":             "Longest, strongest bone. Fracture can bleed 1.5L internally",
+    "Tibia":             "Weight-bearing shin bone. Most commonly fractured long bone",
+    "Patella":           "Sesamoid in quadriceps tendon. Amplifies extension force",
+    "Vertigo":           "World spins when you're still. Inner ear misfiring",
+    "Cochlea":           "Snail-shaped fluid chamber. Converts vibration to nerve signal",
+    "Semicircular Canals":"Detect rotational movement. Three planes, three canals",
+    "Cornea":            "Does 2/3 of the eye's focusing. No blood vessels, self-maintained",
+    "Optic Nerve":       "Carries visual signal to brain. Damaged by glaucoma silently",
+    "Iris":              "Controls pupil size. Dilates in dark, constricts in light",
+    "Meningitis":        "Neck stiffness, photophobia, fever. LP confirms it",
+    "Encephalitis":      "Brain itself inflamed. Altered consciousness, seizures",
+    "CSF":               "Crystal clear normally. Cloudy means infection, bloody means bleed",
+    "Gram Positive":     "Thick peptidoglycan wall. Stains purple, target for penicillin",
+    "Gram Negative":     "Thin wall plus outer membrane. Stains pink, harder to treat",
+    "Peptidoglycan":     "Bacterial cell wall material. Target of penicillin and vancomycin",
+    "Penicillin":        "Blocks cell wall synthesis. Bacteria swell and burst",
+    "Arsenic":           "Inhibits pyruvate dehydrogenase. Mees' lines appear on nails",
+    "Cyanide":           "Blocks cytochrome C oxidase. Cells can't use oxygen at all",
+    "Atropine":          "Muscarinic blocker. Reverses SLUDGE from organophosphates",
+    "Parkinsonism":      "Nigrostriatal dopamine gone. Tremor, rigidity, bradykinesia",
+    "Curare":            "Non-depolarising NMJ blocker. Paralysis without consciousness loss",
+    "Succinylcholine":   "Depolarising blocker. Fastest onset, causes fasciculations first",
+    "Pancuronium":       "Long-acting NMJ blocker. Used for prolonged paralysis",
+    "Vancomycin":        "Last resort for Gram-positive. Inhibits cell wall differently to penicillin",
+    "Atrial Fibrillation":"Chaotic atrial firing. Irregularly irregular pulse, stroke risk",
+};
+
+const cardEmojis={"Langer's Lines":"🔬🩹","Melanoma":"🦠⬛","Skin Graft":"🩹✂️","Exit Wound":"💥🕳️","Rifling":"🔫🌀","Tattooing":"💥🖋️","Rigor Mortis":"💀🔒","Algor Mortis":"🌡️📉","Livor Mortis":"💜⬇️","Propofol":"💉😴","Lidocaine":"🦷💤","Intubation":"🫁🔧","Suture":"🧵🩹","Keloid":"😤🔺","Biopsy":"🔬🩸","Hematoma":"🩸🧠","Abrasion":"🪨🩹","Contusion":"👊🟣","SA Node":"⚡❤️","Troponin":"❤️💔","Myocardium":"❤️💪","Frontal Lobe":"🧠🎭","Cerebellum":"🧠⚖️","Brainstem":"🧠🌉","Warfarin":"🩸🚫","Heparin":"🩸💉","Aspirin":"💊🩸","Schizophrenia":"👁️🌀","Dopamine":"🧠⚡","Serotonin":"😊🧪","Alveoli":"🫧🫁","Bronchioles":"🌿🫁","Salbutamol":"💨💊","Amiodarone":"⚡❤️🚨","Digoxin":"🫀🔬","Mitral Valve":"🫀🚪","Amniotic Fluid":"🤰💧","Placenta":"🤰🫘","HCG":"🤰🧪","Surfactant":"🫧👶","Apgar Score":"👶📊","Meconium":"👶💚","Oxytocin":"🤰⚡","Cervical Dilation":"🚪📏","Ergotamine":"🩸🛑","Insulin":"🔑🍬","Glucagon":"🍬📈","Metformin":"💊🍬","Bilirubin":"🟡🩸","Phototherapy":"💡👶","Kernicterus":"🧠🟡","Fontanelle":"👶🔳","Craniosynostosis":"💀🔀","Molding":"👶🏺","Stapes":"👂🦴","Incus":"👂🔗","Malleus":"👂🔨","Osteoblasts":"🦴🏗️","Osteoclasts":"🦴🔥","Callus":"🦴🌉","Cataract":"👁️☁️","Glaucoma":"👁️📈","Retinal Detachment":"👁️🩹","Femur":"🦵🦴","Tibia":"🦵📏","Patella":"🦵🔘","Vertigo":"😵🌀","Cochlea":"🐌👂","Semicircular Canals":"👂🔄","Cornea":"👁️🪞","Optic Nerve":"👁️📡","Iris":"👁️🌸","Meningitis":"🧠🔥","Encephalitis":"🧠⚠️","CSF":"🧠💧","Gram Positive":"🦠🟣","Peptidoglycan":"🦠🧱","Penicillin":"🍄💊","Arsenic":"☠️🧪","Cyanide":"☠️💨","Atropine":"💊🚑","Parkinsonism":"🚶❌","Curare":"🌿😴","Succinylcholine":"💉😴","Pancuronium":"🏥😴","Gram Negative":"🦠🔴","Vancomycin":"💊🦠","Atrial Fibrillation":"❤️⚡🚨"};
+
+const roundLibrary=[
+    [{name:"Langer's Lines",buckets:["Surgery","Anatomy","Dermatology"],tags:["Skin"]},{name:"Melanoma",buckets:["Dermatology","Pathology","Surgery"],tags:["Skin"]},{name:"Skin Graft",buckets:["Surgery","Dermatology"],tags:["Skin"]},{name:"Exit Wound",buckets:["Forensics","Surgery"],tags:["Ballistics"]},{name:"Rifling",buckets:["Forensics"],tags:["Ballistics"]},{name:"Tattooing",buckets:["Forensics","Dermatology"],tags:["Ballistics"]},{name:"Rigor Mortis",buckets:["Forensics","Pathology"],tags:["Death"]},{name:"Algor Mortis",buckets:["Forensics","Pathology"],tags:["Death"]},{name:"Livor Mortis",buckets:["Forensics","Pathology"],tags:["Death"]},{name:"Propofol",buckets:["Anesthesia","Pharmacology"],tags:["Anesthesia"]},{name:"Lidocaine",buckets:["Anesthesia","Dermatology"],tags:["Anesthesia"]},{name:"Intubation",buckets:["Anesthesia","Surgery"],tags:["Anesthesia"]},{name:"Suture",buckets:["Surgery","Dermatology"],tags:["Skin"]},{name:"Keloid",buckets:["Dermatology","Pathology"],tags:["Skin"]},{name:"Biopsy",buckets:["Pathology","Dermatology"],tags:["Skin"]},{name:"Hematoma",buckets:["Surgery","Forensics"],tags:["Death"]},{name:"Abrasion",buckets:["Forensics","Dermatology"],tags:["Ballistics"]},{name:"Contusion",buckets:["Forensics","Pathology"],tags:["Death"]}],
+    [{name:"SA Node",buckets:["Cardiology","Anatomy"],tags:["Heart"]},{name:"Troponin",buckets:["Cardiology","Pathology"],tags:["Heart"]},{name:"Myocardium",buckets:["Cardiology","Anatomy"],tags:["Heart"]},{name:"Frontal Lobe",buckets:["Neurology","Psychiatry"],tags:["Neuro"]},{name:"Cerebellum",buckets:["Neurology","Anatomy"],tags:["Neuro"]},{name:"Brainstem",buckets:["Neurology","Anesthesia"],tags:["Neuro"]},{name:"Warfarin",buckets:["Cardiology","Pharmacology"],tags:["Blood"]},{name:"Heparin",buckets:["Cardiology","Pharmacology"],tags:["Blood"]},{name:"Aspirin",buckets:["Cardiology","Neurology"],tags:["Blood"]},{name:"Schizophrenia",buckets:["Psychiatry"],tags:["Psych"]},{name:"Dopamine",buckets:["Psychiatry","Neurology"],tags:["Psych"]},{name:"Serotonin",buckets:["Psychiatry"],tags:["Psych"]},{name:"Alveoli",buckets:["Anatomy","Pathology"],tags:["Lung"]},{name:"Bronchioles",buckets:["Anatomy","Pathology"],tags:["Lung"]},{name:"Salbutamol",buckets:["Pharmacology"],tags:["Lung"]},{name:"Amiodarone",buckets:["Cardiology","Pharmacology"],tags:["Heart"]},{name:"Digoxin",buckets:["Cardiology","Pharmacology"],tags:["Heart"]},{name:"Mitral Valve",buckets:["Cardiology","Surgery"],tags:["Heart"]}],
+    [{name:"Amniotic Fluid",buckets:["OBG","Pediatrics"],tags:["Pregnancy"]},{name:"Placenta",buckets:["OBG","Anatomy"],tags:["Pregnancy"]},{name:"HCG",buckets:["OBG","Pathology"],tags:["Pregnancy"]},{name:"Surfactant",buckets:["Pediatrics","Pharmacology"],tags:["Lung"]},{name:"Apgar Score",buckets:["Pediatrics","OBG"],tags:["Lung"]},{name:"Meconium",buckets:["Pediatrics","OBG"],tags:["Lung"]},{name:"Oxytocin",buckets:["OBG","Pharmacology"],tags:["Labor"]},{name:"Cervical Dilation",buckets:["OBG","Anatomy"],tags:["Labor"]},{name:"Ergotamine",buckets:["OBG","Pharmacology"],tags:["Labor"]},{name:"Insulin",buckets:["Cardiology","Pharmacology"],tags:["Diabetes"]},{name:"Glucagon",buckets:["Anatomy","Pharmacology"],tags:["Diabetes"]},{name:"Metformin",buckets:["Pharmacology","OBG"],tags:["Diabetes"]},{name:"Bilirubin",buckets:["Pediatrics","Pathology"],tags:["Jaundice"]},{name:"Phototherapy",buckets:["Pediatrics","Dermatology"],tags:["Jaundice"]},{name:"Kernicterus",buckets:["Pediatrics","Neurology"],tags:["Jaundice"]},{name:"Fontanelle",buckets:["Anatomy","Pediatrics"],tags:["Skull"]},{name:"Craniosynostosis",buckets:["Surgery","Pediatrics"],tags:["Skull"]},{name:"Molding",buckets:["OBG","Pediatrics"],tags:["Skull"]}],
+];
+
+const archivedRounds=[
+    [{name:"Stapes",buckets:["ENT","Anatomy"],tags:["Ear"]},{name:"Incus",buckets:["ENT","Anatomy"],tags:["Ear"]},{name:"Malleus",buckets:["ENT","Anatomy"],tags:["Ear"]},{name:"Osteoblasts",buckets:["Ortho","Pathology"],tags:["Bone"]},{name:"Osteoclasts",buckets:["Ortho","Pathology"],tags:["Bone"]},{name:"Callus",buckets:["Ortho","Pathology"],tags:["Bone"]},{name:"Cataract",buckets:["Ophtho","Surgery"],tags:["Vision"]},{name:"Glaucoma",buckets:["Ophtho","Pharmacology"],tags:["Vision"]},{name:"Retinal Detachment",buckets:["Ophtho","Surgery"],tags:["Vision"]},{name:"Femur",buckets:["Anatomy","Ortho"],tags:["Bone"]},{name:"Tibia",buckets:["Anatomy","Ortho"],tags:["Bone"]},{name:"Patella",buckets:["Anatomy","Ortho"],tags:["Bone"]},{name:"Vertigo",buckets:["ENT","Neurology"],tags:["Ear"]},{name:"Cochlea",buckets:["Anatomy","ENT"],tags:["Ear"]},{name:"Semicircular Canals",buckets:["Anatomy","ENT"],tags:["Ear"]},{name:"Cornea",buckets:["Anatomy","Ophtho"],tags:["Vision"]},{name:"Optic Nerve",buckets:["Anatomy","Ophtho"],tags:["Vision"]},{name:"Iris",buckets:["Anatomy","Ophtho"],tags:["Vision"]}],
+    [{name:"Meningitis",buckets:["Neurology","Pediatrics"],tags:["CNS"]},{name:"Encephalitis",buckets:["Neurology","Micro"],tags:["CNS"]},{name:"CSF",buckets:["Anatomy","Pathology"],tags:["CNS"]},{name:"Gram Positive",buckets:["Micro","Pathology"],tags:["Bacteria"]},{name:"Peptidoglycan",buckets:["Micro","Pharmacology"],tags:["Bacteria"]},{name:"Penicillin",buckets:["Pharmacology","Micro"],tags:["Bacteria"]},{name:"Arsenic",buckets:["Forensics","Pharmacology"],tags:["Poison"]},{name:"Cyanide",buckets:["Forensics","Pharmacology"],tags:["Poison"]},{name:"Atropine",buckets:["Pharmacology","Anesthesia"],tags:["Poison"]},{name:"Dopamine",buckets:["Neurology","Psychiatry"],tags:["Dopamine Seesaw"]},{name:"Serotonin",buckets:["Psychiatry","Pharmacology"],tags:["Dopamine Seesaw"]},{name:"Parkinsonism",buckets:["Neurology","Anatomy"],tags:["Dopamine Seesaw"]},{name:"Curare",buckets:["Anesthesia","Pharmacology"],tags:["Muscle Relax"]},{name:"Succinylcholine",buckets:["Anesthesia","Pharmacology"],tags:["Muscle Relax"]},{name:"Pancuronium",buckets:["Anesthesia","Pharmacology"],tags:["Muscle Relax"]},{name:"Gram Negative",buckets:["Micro","Pathology"],tags:["Bacteria"]},{name:"Vancomycin",buckets:["Pharmacology","Micro"],tags:["Bacteria"]},{name:"Atrial Fibrillation",buckets:["Cardiology","Neurology"],tags:["Heart"]}],
+];
+
+const wrongMessages=[
+    "OMG my doc uses AI 💀",
+    "Wrong ward, wrong answer",
+    "That's a brave guess",
+    "Even WebMD disagrees",
+    "House would be disappointed",
+    "That's not what they taught in med school",
+    "The stethoscope is crying",
+    "Needs more caffeine ☕",
+    "Wrong. But bold. Respect.",
+    "Sir this is a hospital, not a guess",
+    "The ECG is flatlined",
+    "Bro studied the wrong chapter",
+];
+
+const correctMessages=[
+    "Wow, you must have studied using PrepLadder 🔥",
+    "PrepLadder student spotted 👀",
+    "Clean. Clinical. PrepLadder energy.",
+    "That's the PrepLadder difference right there",
+    "Sharp thinking! 🧠",
+    "Textbook placement 📖",
+    "Clinical instinct on point",
+    "That's how you do it",
+    "Solid combo. Keep going.",
+    "Nice one. Stay focused.",
+    "You clearly paid attention in class 😏",
+    "PrepLadder would be proud",
+];
+
+// GAME STATE
+let currentRound=0,currentTurn=1,score=0,streak=0,selectedCards=[],gameLog=[];
+const ROUND_TIME=60;
+let timerSecondsLeft=ROUND_TIME,timerInterval=null;
+const OB_KEY='prepcombo_trained_v1';
+
+function goToStartScreen(){
+    playTone(440,'sine',0.2,0.15); haptic([15,8,15]);
+    document.getElementById('splash-screen').style.display='none';
+    document.getElementById('start-screen').style.display='flex';
+}
+
+function goToTraining(){
+    getCtx();
+    document.getElementById('splash-screen').style.display='none';
+    document.getElementById('start-screen').style.display='none';
+    document.getElementById('skip-training-btn').style.display='inline-block';
+    document.getElementById('onboarding-screen').style.display='flex';
+}
+
+function skipTraining(){
+    document.getElementById('onboarding-screen').style.display='none';
+    document.getElementById('start-screen').style.display='flex';
+}
+
+// ── TIMER ──
+function startTimer(){timerSecondsLeft=ROUND_TIME;clearInterval(timerInterval);updateTimerUI();timerInterval=setInterval(()=>{timerSecondsLeft--;updateTimerUI();if(timerSecondsLeft<=0){clearInterval(timerInterval);timerExpired();}},1000);}
+function stopTimer(){clearInterval(timerInterval);}
+function updateTimerUI(){
+    const pct=timerSecondsLeft/ROUND_TIME;
+    const tv=document.getElementById('timer-val'),bar=document.getElementById('timer-bar'),pill=document.getElementById('bonus-pill');
+    if(!tv)return;
+    tv.innerText=timerSecondsLeft; bar.style.width=(pct*100)+'%';
+    pill.innerText=`+${getSpeedBonus()} speed`;
+    if(pct>0.5){tv.style.color='#4f9e72';bar.className='';pill.className='';}
+    else if(pct>0.25){tv.style.color='#d97706';bar.className='warn';pill.className='warn';if(timerSecondsLeft===15)haptic([20,10,20]);}
+    else{tv.style.color='#ef4444';bar.className='danger';pill.className='danger';if(timerSecondsLeft<=10)haptic(15);}
+}
+function getSpeedBonus(){return Math.round((timerSecondsLeft/ROUND_TIME)*100);}
+function timerExpired(){
+    haptic([40,20,40,20,40]);playTone(200,'square',0.3,0.3);
+    gameLog.push({round:currentRound,bucket:'',cards:'(time expired)',pts:0,mult:1,correct:false,skipped:true});
+    document.getElementById('message').innerText="Time's up. Moving on...";
+    selectedCards.forEach(c=>c.el.classList.remove('selected'));selectedCards=[];
+    updateBucketState();currentTurn=1;currentRound++;
+    if(currentRound>=roundLibrary.length)setTimeout(endGame,1000);
+    else setTimeout(()=>showRoundSplash(currentRound+1),1000);
+}
+
+// ── REAL GAME ──
+function startGame(){
+    getCtx();playTone(440,'sine',0.2,0.2);haptic([20,10,20]);
+    document.getElementById('start-screen').style.display='none';
+    document.getElementById('game-interface').style.display='flex';
+    buildBuckets();loadRound();
+}
+
+function buildBuckets(){
+    const bc=document.getElementById('buckets');bc.innerHTML='';
+    subjects.forEach(sub=>{
+        const d=document.createElement('div');d.className='bucket';d.innerText=sub;
+        d.style.background=bucketColors[sub]||'#607080';
+        d.onclick=()=>dropInBucket(sub,d);bc.appendChild(d);
+    });
+}
+
+function updateBucketState(){
+    const ok=selectedCards.length===3;
+    document.querySelectorAll('#buckets .bucket').forEach(b=>b.classList.toggle('active',ok));
+    const hint=document.getElementById('submit-hint'),pill=document.getElementById('bonus-pill');
+    if(ok){hint.style.color='var(--accent)';hint.childNodes[0].textContent='3 selected. Tap a specialty  ';pill.style.display='inline-block';}
+    else{hint.style.color='var(--text-secondary)';hint.childNodes[0].textContent=selectedCards.length===0?'Double tap cards to select  ':`${selectedCards.length} selected. Pick ${3-selectedCards.length} more  `;pill.style.display='none';}
+    if(currentTurn===3)updateComboHints();
+}
+
+// ── LONG PRESS CARD SYSTEM ──
+// Each card tracks its own press timer
+function makeCard(data, pool, tapFn, longPressFn) {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.dataset.name = data.name;
+    const em = cardEmojis[data.name] || '🏥';
+    const hint = cardHints[data.name] || '';
+    el.innerHTML = `
+      <div class="card-inner">
+        <div class="card-face card-front-face">
+          <span class="ce">${em}</span>
+          <span class="cn">${data.name}</span>
+        </div>
+        <div class="card-face card-back-face">
+          <span class="hint-text">${hint}</span>
+          <span class="cn">${data.name}</span>
+        </div>
+      </div>`;
+
+    let pressTimer     = null;
+    let longPressFired = false;
+    let lastTap        = 0;
+    let startX = 0, startY = 0;
+    let isTouchDevice  = false; // set true on first touch — disables mouse fallback
+    const LONG_MS   = 500;
+    const DOUBLE_MS = 350;
+
+    el.addEventListener('contextmenu', e => e.preventDefault());
+
+    // ── TOUCH ──
+    el.addEventListener('touchstart', (e) => {
+        isTouchDevice  = true;
+        longPressFired = false;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        pressTimer = setTimeout(() => {
+            if (!el.classList.contains('hidden')) {
+                longPressFired = true;
+                longPressFn(el, data);
+            }
+        }, LONG_MS);
+    }, { passive: true });
+
+    el.addEventListener('touchmove', (e) => {
+        const dx = Math.abs(e.touches[0].clientX - startX);
+        const dy = Math.abs(e.touches[0].clientY - startY);
+        if (dx > 8 || dy > 8) {
+            clearTimeout(pressTimer);
+            longPressFired = true; // block tap on lift
+        }
+    }, { passive: true });
+
+    el.addEventListener('touchend', () => {
+        clearTimeout(pressTimer);
+        if (longPressFired) { longPressFired = false; lastTap = 0; return; }
+        if (el.classList.contains('hidden')) return;
+        const now = Date.now();
+        if (now - lastTap < DOUBLE_MS) {
+            lastTap = 0;
+            tapFn(el, data); // ✓ double tap
+        } else {
+            lastTap = now;   // first tap — wait for second
+        }
+    });
+
+    el.addEventListener('touchcancel', () => {
+        clearTimeout(pressTimer);
+        longPressFired = false;
+        lastTap = 0;
+    });
+
+    // ── MOUSE (desktop only — disabled if touch was detected) ──
+    el.addEventListener('mousedown', () => {
+        if (isTouchDevice) return;
+        longPressFired = false;
+        pressTimer = setTimeout(() => {
+            longPressFired = true;
+            longPressFn(el, data);
+        }, LONG_MS);
+    });
+    el.addEventListener('mouseup', () => {
+        if (isTouchDevice) return;
+        clearTimeout(pressTimer);
+        if (!longPressFired) tapFn(el, data); // desktop: single click = select
+        longPressFired = false;
+    });
+    el.addEventListener('mouseleave', () => {
+        if (isTouchDevice) return;
+        clearTimeout(pressTimer);
+        longPressFired = false;
+    });
+
+    pool.appendChild(el);
+    return el;
+}
+
+function loadRound(){
+    const pool=document.getElementById('community-pool');pool.innerHTML='';
+    const isLast=(currentTurn===3);
+    [...roundLibrary[currentRound]].sort(()=>Math.random()-0.5).forEach(data=>{
+        const el = makeCard(data, pool,
+            (el,data) => tapSelectCard(el,data),
+            (el,data) => longPressFlipCard(el,data)
+        );
+        if(isLast){
+            const col=tagColors[data.tags[0]]||'#2d3f55';
+            const front=el.querySelector('.card-front-face');
+            front.style.background=col;
+            front.querySelector('.cn').style.color='#f8fafc';
+        }
+    });
+    document.getElementById('round-num').innerText=currentRound+1;
+    document.getElementById('turn-num').innerText=4-currentTurn;
+    updateBucketState();
+    document.getElementById('message').innerText='Double tap to select. Long press for a hint.';
+    startTimer();
+}
+
+function tapSelectCard(el, data){
+    if(el.classList.contains('hidden')) return;
+    if(el.classList.contains('selected')){
+        selectedCards=selectedCards.filter(c=>c.el!==el);
+        el.classList.remove('selected');
+        sndDeselect(); haptic(H_TAP);
+    } else {
+        if(selectedCards.length>=3){ sndError(); haptic(H_ERROR); document.getElementById('message').innerText='Already 3 selected. Deselect one first.'; return; }
+        selectedCards.push({el,data});
+        el.classList.add('selected');
+        sndSelect(); haptic(H_SELECT);
+    }
+    updateBucketState();
+}
+
+function longPressFlipCard(el, data){
+    if(el.classList.contains('hidden')) return;
+    el.classList.toggle('flipped');
+    sndFlip(); haptic([15,5,15]);
+}
+
+function updateComboHints(){
+    document.querySelectorAll('#community-pool .card.combo-hint').forEach(c=>c.classList.remove('combo-hint'));
+    if(selectedCards.length<2) return;
+    const tc={};
+    selectedCards.forEach(c=>c.data.tags.forEach(t=>{tc[t]=(tc[t]||0)+1;}));
+    const ht=Object.keys(tc).filter(t=>tc[t]>=2);
+    if(!ht.length) return;
+    selectedCards.forEach(c=>{if(c.data.tags.some(t=>ht.includes(t)))c.el.classList.add('combo-hint');});
+}
+
+function dropInBucket(bucketName,bucketEl){
+    if(selectedCards.length!==3){ sndError();haptic(H_ERROR);document.getElementById('message').innerText='Select exactly 3 cards first.';return; }
+    const correctCount=selectedCards.filter(c=>c.data.buckets.includes(bucketName)).length;
+    const isCorrect=correctCount>=2;
+    let mult=1,activeTag=null,tagCount={};
+    selectedCards.flatMap(c=>c.data.tags).forEach(t=>tagCount[t]=(tagCount[t]||0)+1);
+    Object.keys(tagCount).forEach(t=>{if(tagCount[t]===3){mult=20;activeTag=t;}else if(tagCount[t]===2&&mult<20)mult=10;});
+    if(!isCorrect){
+        sndWrong();haptic(H_WRONG);
+        // Consolation points — base score for the cards regardless of bucket, no multiplier, half speed bonus
+        const consolation = selectedCards.length * 2 + Math.round(getSpeedBonus() * 0.3);
+        score += consolation;
+        document.getElementById('score-val').innerText=score;
+        selectedCards.forEach(c=>{c.el.classList.add('wrong-shake');setTimeout(()=>{c.el.classList.add('hidden');c.el.classList.remove('selected','wrong-shake');},460);});
+        const msg=document.getElementById('message');
+        msg.innerText=wrongMessages[Math.floor(Math.random()*wrongMessages.length)]+` (+${consolation})`;
+        msg.classList.add('wrong');setTimeout(()=>msg.classList.remove('wrong'),600);
+        showScorePop(`+${consolation}`,bucketEl,true);
+        streak=0; document.getElementById('streak-val').innerText='0🔥';
+        gameLog.push({round:currentRound,bucket:bucketName,cards:selectedCards.map(c=>c.data.name).join(', '),pts:consolation,mult:1,speedBonus:0,correct:false,hod:false});
+        const entry=document.createElement('div');entry.className='history-item';entry.style.borderLeftColor='#ef4444';
+        entry.innerHTML=`<strong>✗ ${bucketName}:</strong> ${selectedCards.map(c=>c.data.name).join(', ')}`;
+        document.getElementById('history-list').prepend(entry);
+        selectedCards=[];updateBucketState();advanceTurn();return;
+    }
+    sndSubmit();haptic(H_SUBMIT);
+    let base=0;selectedCards.forEach(c=>{base+=c.data.buckets.includes(bucketName)?10:2;});
+    const speedBonus=getSpeedBonus(),pts=(base*mult)+speedBonus;
+    score+=pts;document.getElementById('score-val').innerText=score;
+    streak=(mult>=10)?streak+1:0;document.getElementById('streak-val').innerText=streak+'🔥';
+    if(streak>=3)showStreakBanner(streak);
+    if(bucketEl){bucketEl.classList.add('pulse-green');setTimeout(()=>bucketEl.classList.remove('pulse-green'),600);}
+    showScorePop(`+${pts}`,bucketEl,false);
+    gameLog.push({round:currentRound,bucket:bucketName,cards:selectedCards.map(c=>c.data.name).join(', '),pts,mult,speedBonus,correct:true,hod:mult===20});
+    const entry=document.createElement('div');entry.className='history-item';
+    entry.innerHTML=`<strong>${bucketName}:</strong> ${selectedCards.map(c=>c.data.name).join(', ')}`;
+    document.getElementById('history-list').prepend(entry);
+    selectedCards.forEach(c=>{c.el.classList.add('hidden');c.el.classList.remove('selected','flipped');});
+    selectedCards=[];updateBucketState();
+    if(mult===20&&activeTag){
+        document.getElementById('message').innerText=`HOD STATUS! +${pts}`;
+        setTimeout(()=>triggerHouseStatus(activeTag,treasures[activeTag]||''),300);
+    } else {
+        const m=correctMessages;
+        document.getElementById('message').innerText=`+${pts} (speed +${speedBonus})  ${m[Math.floor(Math.random()*m.length)]}`;
+    }
+    advanceTurn();
+}
+
+function advanceTurn(){
+    currentTurn++;
+    if(currentTurn>3){currentTurn=1;currentRound++;stopTimer();if(currentRound>=roundLibrary.length)setTimeout(endGame,700);else showRoundSplash(currentRound+1);}
+    else{document.getElementById('turn-num').innerText=4-currentTurn;if(currentTurn===3)revealCardColors();}
+}
+
+function revealCardColors(){
+    document.querySelectorAll('#community-pool .card:not(.hidden)').forEach(el=>{
+        const d=roundLibrary[currentRound].find(c=>c.name===el.dataset.name);if(!d)return;
+        const front=el.querySelector('.card-front-face');
+        if(front){
+            front.style.transition='background 0.7s ease';
+            front.style.background=tagColors[d.tags[0]]||'#2d3f55';
+            front.querySelector('.cn').style.color='#f8fafc';
+        }
+    });
+}
+
+function showScorePop(text,el,bad){
+    const p=document.createElement('div');p.className='score-pop '+(bad?'bad':'good');p.innerText=text;
+    if(el){const r=el.getBoundingClientRect();p.style.left=(r.left+r.width/2-18)+'px';p.style.top=(r.top-6)+'px';}
+    else{p.style.left='46%';p.style.top='50%';}
+    document.body.appendChild(p);setTimeout(()=>p.remove(),1100);
+}
+function showStreakBanner(n){
+    sndStreak();haptic([30,20,30,20,30]);
+    const b=document.getElementById('streak-banner');b.innerText=`${n}x STREAK. ON FIRE!`;b.style.display='block';
+    setTimeout(()=>{b.style.display='none';},1900);
+}
+function showRoundSplash(n){
+    sndRound();haptic([40,20,60]);stopTimer();
+    const s=document.getElementById('round-splash');
+    document.getElementById('splash-title').innerText=`ROUND ${n}`;
+    document.getElementById('splash-sub').innerText='New cards. Stay sharp.';
+    s.style.display='flex';setTimeout(()=>{s.style.display='none';loadRound();},1800);
+}
+function launchConfetti(){
+    const cols=['#d97706','#ef4444','#22c55e','#3b82f6','#a855f7','#ec4899','#f8fafc'];
+    for(let i=0;i<55;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.left=Math.random()*100+'vw';c.style.background=cols[Math.floor(Math.random()*cols.length)];c.style.width=(Math.random()*7+4)+'px';c.style.height=(Math.random()*7+4)+'px';c.style.borderRadius=Math.random()>0.5?'50%':'2px';c.style.animationDuration=(Math.random()*1.4+1.1)+'s';c.style.animationDelay=(Math.random()*0.4)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2800);}
+}
+function triggerHouseStatus(tag,text){
+    sndHOD();haptic(H_HOD);launchConfetti();
+    document.getElementById('house-gif').src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3MzaTV0ZXF3bjJldDQ3eTEwcjEycTBuY2d3Y2Z5OTd3bGx5OTl4ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZZiLDJ98R2GOY/giphy.gif";
+    document.getElementById('treasure-display').innerHTML=`<h3 style="color:var(--accent);margin-bottom:8px;">${tag} UNLOCKED</h3><p>${text}</p>`;
+    document.getElementById('house-modal').style.display='flex';
+}
+function closeHouseModal(){document.getElementById('house-modal').style.display='none';}
+
+function buildSummary(){
+    const wrap=document.getElementById('round-summary');wrap.innerHTML='';
+    const rNames=['Round 1','Round 2','Round 3'];
+    for(let r=0;r<roundLibrary.length;r++){
+        const plays=gameLog.filter(p=>p.round===r);
+        const div=document.createElement('div');div.className='summary-round';
+        div.innerHTML=`<h4>${rNames[r]}</h4>`;
+        if(!plays.length){div.innerHTML+=`<div style="font-size:0.72rem;color:var(--text-secondary);">No plays recorded</div>`;}
+        else plays.forEach(p=>{
+            let badge='',bc='badge-ok';
+            if(p.skipped){badge='Skipped';bc='badge-miss';}
+            else if(p.hod){badge='HOD!';bc='badge-hod';}
+            else if(!p.correct){badge='Wrong';bc='badge-miss';}
+            else if(p.mult>=10){badge='Combo';bc='badge-good';}
+            else{badge='Placed';bc='badge-good';}
+            div.innerHTML+=`<div class="summary-play"><span class="sp-bucket" style="color:${bucketColors[p.bucket]||'var(--text-primary)'};">${p.bucket}</span><span class="sp-cards">${p.cards}</span><span class="sp-badge ${bc}">${badge} +${p.pts}</span></div>`;
+        });
+        wrap.appendChild(div);
+    }
+}
+
+function endGame(){
+    stopTimer();
+    document.getElementById('game-interface').style.display='none';
+    document.getElementById('result-screen').style.display='flex';
+    sndVictory();haptic([50,30,80,30,100]);launchConfetti();
+    let t='',f='';
+    if(score>6000){t="DEAN OF MEDICINE";f="Top of the board. Exceptional.";}
+    else if(score>3500){t="HEAD OF DEPARTMENT";f="Clinical instinct on point.";}
+    else if(score>2000){t="ATTENDING CONSULTANT";f="Razor sharp.";}
+    else if(score>1000){t="SENIOR RESIDENT";f="Night shift certified.";}
+    else if(score>400){t="INTERN";f="Surviving on caffeine and textbooks.";}
+    else{t="FIRST YEAR";f="Keep at it. You'll get there.";}
+    document.getElementById('rank-title').innerText=t;
+    document.getElementById('rank-flavor').innerText=f;
+    document.getElementById('final-score-val').innerText=score;
+    buildSummary();
+    const result={score,rank:t,plays:gameLog,timestamp:new Date().toISOString()};
+    if(typeof window.onPrepComboEnd==='function')window.onPrepComboEnd(result);
+}
+
+// ============================================================
+// SHARE — Web Share API
+// To update the URL: change SHARE_URL below to your live link
+// ============================================================
+const SHARE_URL = 'https://prepladder.com/prepcombo'; // ← swap this when you go live
+
+function shareScore() {
+    const rankEl  = document.getElementById('rank-title').innerText;
+    const scoreEl = document.getElementById('final-score-val').innerText;
+    const text = `I just scored ${scoreEl} pts on PrepCombo and ranked "${rankEl}" 🏆\n\nCan you beat me? Powered by PrepLadder.\n${SHARE_URL}`;
+
+    if (navigator.share) {
+        navigator.share({ title: 'PrepCombo', text })
+            .catch(() => {}); // user cancelled — do nothing
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('button[onclick="shareScore()"]');
+            const orig = btn.innerText;
+            btn.innerText = 'COPIED TO CLIPBOARD ✓';
+            setTimeout(() => { btn.innerText = orig; }, 2000);
+        }).catch(() => {
+            alert(text);
+        });
+    }
+}
+const trainingCards=[
+    {name:"Stapes",buckets:["ENT","Anatomy"],tags:["Ear"]},{name:"Incus",buckets:["ENT","Anatomy"],tags:["Ear"]},{name:"Malleus",buckets:["ENT","Anatomy"],tags:["Ear"]},
+    {name:"Osteoblasts",buckets:["Ortho","Pathology"],tags:["Bone"]},{name:"Osteoclasts",buckets:["Ortho","Pathology"],tags:["Bone"]},{name:"Callus",buckets:["Ortho","Pathology"],tags:["Bone"]},
+    {name:"Cataract",buckets:["Ophtho","Surgery"],tags:["Vision"]},{name:"Glaucoma",buckets:["Ophtho","Pharmacology"],tags:["Vision"]},{name:"Retinal Detachment",buckets:["Ophtho","Surgery"],tags:["Vision"]},
+];
+
+let trainingTurn=1,trainingScore=0,tSelectedCards=[];
+let guideStep=0;
+
+const GUIDE_STEPS=[
+    {msg:"Double tap any card to select it\n(gold border appears)",    waitFor:'first-select'},
+    {msg:"Select 2 more cards\nto make a combination",          waitFor:'three-selected'},
+    {msg:"Long press any card\nto read its clinical hint",       waitFor:'first-flip'},
+    {msg:"Now tap a Specialty Bucket\nto submit your 3 cards",   waitFor:'submitted'},
+];
+
+function startTraining(){
+    document.getElementById('onboarding-screen').style.display='none';
+    document.getElementById('training-interface').style.display='flex';
+    trainingTurn=1;trainingScore=0;tSelectedCards=[];guideStep=0;
+    buildTrainingBuckets();loadTrainingTurn();
+}
+
+function buildTrainingBuckets(){
+    const tb=document.getElementById('t-buckets');tb.innerHTML='';
+    subjects.forEach(sub=>{
+        const d=document.createElement('div');d.className='bucket';d.innerText=sub;
+        d.style.background=bucketColors[sub]||'#607080';d.style.opacity='0.5';
+        d.onclick=()=>tDropInBucket(sub,d);tb.appendChild(d);
+    });
+}
+
+function loadTrainingTurn(){
+    const pool=document.getElementById('t-pool');pool.innerHTML='';
+    tSelectedCards=[];tUpdateBuckets();
+    const cards=[...trainingCards].sort(()=>Math.random()-0.5);
+    cards.forEach(data=>{
+        makeCard(data,pool,
+            (el,data)=>tTapSelect(el,data),
+            (el,data)=>tLongPressFlip(el,data)
+        );
+    });
+    document.getElementById('t-turn-num').innerText=trainingTurn;
+    if(trainingTurn===1){guideStep=0;showGuideStep();}
+    else{hideGuide();document.getElementById('t-message').innerText=trainingTurn===2?'Turn 2. You know what to do.':'Last training turn. Make it count.';}
+}
+
+function showGuideStep(){
+    if(trainingTurn!==1){hideGuide();return;}
+    const step=GUIDE_STEPS[guideStep];
+    if(!step){hideGuide();return;}
+    const overlay=document.getElementById('guide-overlay');
+    const tooltip=document.getElementById('guide-tooltip');
+    const spotlight=document.getElementById('guide-spotlight');
+    overlay.style.display='block';
+    tooltip.innerHTML=step.msg.replace(/\n/g,'<br>')+'<span class="finger">👆</span>';
+    let targetEl=null;
+    if(step.waitFor==='first-select'||step.waitFor==='three-selected') targetEl=document.getElementById('t-pool');
+    else if(step.waitFor==='first-flip') targetEl=document.querySelector('#t-pool .card:not(.hidden)');
+    else if(step.waitFor==='submitted') targetEl=document.getElementById('t-buckets');
+    if(targetEl){
+        const r=targetEl.getBoundingClientRect();const pad=4;
+        spotlight.style.left=(r.left-pad)+'px';spotlight.style.top=(r.top-pad)+'px';
+        spotlight.style.width=(r.width+pad*2)+'px';spotlight.style.height=(r.height+pad*2)+'px';
+        spotlight.style.display='block';
+        tooltip.style.top=Math.min(r.bottom+14,window.innerHeight-120)+'px';
+    } else { spotlight.style.display='none';tooltip.style.top='40%'; }
+}
+
+function hideGuide(){document.getElementById('guide-overlay').style.display='none';document.getElementById('guide-spotlight').style.display='none';}
+function advanceGuideStep(){guideStep++;setTimeout(showGuideStep,200);}
+
+function tTapSelect(el,data){
+    if(el.classList.contains('hidden'))return;
+    if(el.classList.contains('selected')){
+        tSelectedCards=tSelectedCards.filter(c=>c.el!==el);
+        el.classList.remove('selected');sndDeselect();haptic(H_TAP);
+    } else {
+        if(tSelectedCards.length>=3){sndError();return;}
+        tSelectedCards.push({el,data});el.classList.add('selected');sndSelect();haptic(H_SELECT);
+        if(trainingTurn===1&&guideStep===0)advanceGuideStep();
+        if(trainingTurn===1&&tSelectedCards.length===3&&guideStep===1)advanceGuideStep();
+    }
+    tUpdateBuckets();
+}
+
+function tLongPressFlip(el,data){
+    if(el.classList.contains('hidden'))return;
+    el.classList.toggle('flipped');sndFlip();haptic([15,5,15]);
+    if(trainingTurn===1&&guideStep===2)advanceGuideStep();
+}
+
+function tUpdateBuckets(){
+    const ok=tSelectedCards.length===3;
+    document.querySelectorAll('#t-buckets .bucket').forEach(b=>b.style.opacity=ok?'1':'0.5');
+    const hint=document.getElementById('t-hint');
+    if(ok){hint.style.color='var(--accent)';hint.innerText='3 selected. Tap a specialty bucket.';}
+    else{hint.style.color='var(--text-secondary)';hint.innerText=tSelectedCards.length===0?'Double tap a card to select it.':`${tSelectedCards.length} selected. Pick ${3-tSelectedCards.length} more.`;}
+}
+
+function tDropInBucket(bucketName,bucketEl){
+    if(tSelectedCards.length!==3){sndError();return;}
+    if(trainingTurn===1&&guideStep===3){hideGuide();guideStep++;}
+    const correctCount=tSelectedCards.filter(c=>c.data.buckets.includes(bucketName)).length;
+    const isCorrect=correctCount>=2;
+    let mult=1,activeTag=null,tagCount={};
+    tSelectedCards.flatMap(c=>c.data.tags).forEach(t=>tagCount[t]=(tagCount[t]||0)+1);
+    Object.keys(tagCount).forEach(t=>{if(tagCount[t]===3){mult=3;activeTag=t;}else if(tagCount[t]===2&&mult<3)mult=2;});
+    if(!isCorrect){
+        sndWrong();haptic(H_WRONG);
+        tSelectedCards.forEach(c=>{c.el.classList.add('wrong-shake');setTimeout(()=>{c.el.classList.add('hidden');c.el.classList.remove('selected','wrong-shake');},460);});
+        document.getElementById('t-message').innerText=wrongMessages[Math.floor(Math.random()*wrongMessages.length)];
+    } else {
+        sndSubmit();haptic(H_SUBMIT);
+        let base=0;tSelectedCards.forEach(c=>{base+=c.data.buckets.includes(bucketName)?10:2;});
+        const pts=base*mult;trainingScore+=pts;
+        document.getElementById('t-score-val').innerText=trainingScore;
+        if(bucketEl){bucketEl.classList.add('pulse-green');setTimeout(()=>bucketEl.classList.remove('pulse-green'),600);}
+        showScorePop(`+${pts}`,bucketEl,false);
+        document.getElementById('t-message').innerText=activeTag?`${activeTag} combo! +${pts}`:`+${pts}  ${correctMessages[Math.floor(Math.random()*correctMessages.length)]}`;
+        tSelectedCards.forEach(c=>{c.el.classList.add('hidden');c.el.classList.remove('selected','flipped');});
+    }
+    tSelectedCards=[];tUpdateBuckets();
+    trainingTurn++;
+    if(trainingTurn>3)setTimeout(showTrainingComplete,800);
+    else setTimeout(loadTrainingTurn,700);
+}
+
+function showTrainingComplete(){
+    hideGuide();
+    document.getElementById('training-interface').style.display='none';
+    document.getElementById('training-complete').style.display='flex';
+    launchConfetti();sndVictory();haptic([40,20,60,20,80]);
+    localStorage.setItem(OB_KEY,'1');
+}
+function beginRealGame(){
+    document.getElementById('training-complete').style.display='none';
+    document.getElementById('start-screen').style.display='flex';
+}
+</script>
+</body>
+</html>
