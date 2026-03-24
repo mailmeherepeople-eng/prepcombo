@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PrepCombo</title>
+    <title>PrepCombo v30</title>
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="pragma" content="no-cache">
     <style>
         :root { --bg:#eef2f7; --surface:#e2e8f0; --surface2:#ffffff; --card-border:#cbd5e1; --accent:#3b82f6; --gold:#d97706; --text-primary:#1e293b; --text-secondary:#64748b; }
         * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; padding:0; }
@@ -11,12 +13,12 @@
         body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text-primary); display:flex; flex-direction:column; height:100dvh; overflow:hidden; }
 
         /* SPLASH */
-        #splash-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:20000; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
-        #splash-screen h1 { font-size:3rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:6px; }
+        #splash-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:20000; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; cursor:pointer; }
+        #splash-screen h1 { font-size:3rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:6px; pointer-events:none; }
         #splash-screen h1 span.p1 { color:#ffffff; }
         #splash-screen h1 span.p2 { color:var(--gold); }
-        #splash-screen .splash-sub { color:#64748b; font-size:0.9rem; margin-bottom:60px; font-style:italic; }
-        #splash-screen .tap-play { color:#ffffff; font-size:1rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; animation:pulseText 1.4s ease infinite; }
+        #splash-screen .splash-sub { color:#64748b; font-size:0.9rem; margin-bottom:60px; font-style:italic; pointer-events:none; }
+        #splash-screen .tap-play { color:#ffffff; font-size:1rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; animation:pulseText 1.4s ease infinite; pointer-events:none; }
         @keyframes pulseText { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
         #splash-screen .training-link { position:absolute; bottom:40px; color:#475569; font-size:0.8rem; cursor:pointer; text-decoration:underline; background:none; border:none; }
 
@@ -169,9 +171,7 @@
 <div id="splash-screen">
     <h1><span class="p1">Prep</span><span class="p2">Combo</span></h1>
     <p class="splash-sub">"Making it stick should be fun"</p>
-    <button onclick="getCtx(); goToStartScreen();" style="background:none;border:none;cursor:pointer;padding:20px 40px;">
-        <p class="tap-play">Tap to play</p>
-    </button>
+    <p class="tap-play">Tap to play</p>
 </div>
 
 <!-- ONBOARDING SCREEN -->
@@ -325,7 +325,7 @@ const subjects=["Cardiology","Neurology","Psychiatry","Surgery","OBG","Pediatric
 const bucketColors={"Cardiology":"#c0626a","Neurology":"#7165a8","Psychiatry":"#8b63a3","Surgery":"#4a80a0","OBG":"#b8608a","Pediatrics":"#4f9e72","Dermatology":"#b08040","Anesthesia":"#3d8f8a","ENT":"#b07038","Ophtho":"#5078b8","Ortho":"#8f6e4a","Forensics":"#607080","Pharmacology":"#3d8a60","Pathology":"#a05858","Micro":"#3d7060","Anatomy":"#4060a8"};
 const tagColors={"Skin":"#a06840","Ballistics":"#5a6070","Death":"#3a4050","Anesthesia":"#3d8a80","Heart":"#a85060","Neuro":"#5a559a","Blood":"#8a4040","Psych":"#7858a0","Lung":"#3d7858","Pregnancy":"#8a5080","Labor":"#a06048","Diabetes":"#4a8860","Jaundice":"#8a7030","Skull":"#505868","Ear":"#4070a0","Bone":"#8a7048","Vision":"#3860a0","Leg":"#3a7850","Balance":"#3a4888","Eye":"#3055a0","CNS":"#783838","Bacteria":"#286848","Poison":"#4a6828","Dopamine Seesaw":"#683888","Muscle Relax":"#7a5820"};
 
-const treasures={"Skin":"The ABCDE of Melanoma: Asymmetry, Border, Colour, Diameter, Evolving. Following Langer's Lines ensures minimal tension on wound edges for superior healing.","Ballistics":"Rifling imparts gyroscopic stability to bullets. Tattooing — unburnt gunpowder in skin — lets forensic experts estimate range of fire to within centimetres.","Death":"The Post-Mortem Triad: Algor Mortis (cooling), Rigor Mortis (ATP stiffening), Livor Mortis (blood settling). Pillars of the Henssge Nomogram for time-of-death estimation.","Heart":"Impulses from the SA Node propagate through the Myocardium. Time is Muscle. Cardiomyocytes cannot regenerate once infarcted.","Lung":"Gas exchange at the Alveoli via passive diffusion. Without Surfactant from Type II pneumocytes, neonates develop Respiratory Distress Syndrome.","Neuro":"Motor fibres from the Frontal Lobe decussate in the Medullary Pyramids. Left hemisphere stroke causes right-sided hemiplegia.","Labor":"Oxytocin triggers contractions. Ergotamine manages PPH by sustaining uterine contraction.","Ear":"The Ossicular Chain (Malleus, Incus, Stapes) amplifies sound pressure 22x to bridge air and cochlear fluid.","Bacteria":"Gram staining reveals Peptidoglycan thickness. Penicillin and Vancomycin both target cell wall synthesis by different mechanisms.","Psych":"Mesolimbic overactivity causes Schizophrenia. Nigrostriatal destruction causes Parkinsonism.","Anesthesia":"General Anaesthesia requires Hypnosis, Analgesia, and Muscle Relaxation (e.g. Succinylcholine).","Diabetes":"Insulin activates GLUT4. Metformin reduces hepatic glucose output and boosts sensitivity.","Poison":"Cyanide blocks Cytochrome C Oxidase. Atropine blocks muscarinic receptors, reversing SLUDGE syndrome in organophosphate poisoning.","Vision":"Light: Cornea, Lens, Retina. Glaucoma is the Silent Thief of Sight. IOP silently damages the Optic Nerve.","CNS":"The BBB is so restrictive that CSF via Lumbar Puncture is the only way to confirm Meningitis.","Bone":"Osteoblasts build, Osteoclasts clear. Callus is the first sign of fracture healing.","Skull":"Fontanelles allow moulding during birth. Craniosynostosis restricts brain growth and needs surgical release.","Pregnancy":"HCG sustains the corpus luteum. Amniotic Fluid volume is a key indicator of fetal wellbeing.","Blood":"Heparin acts immediately. Warfarin takes days (inhibits Vit K). Aspirin is antiplatelet, not anticoagulant.","Jaundice":"Unconjugated bilirubin crosses the BBB causing Kernicterus. Phototherapy isomerises bilirubin for excretion.","Dopamine Seesaw":"Mesolimbic dopamine drives reward. Nigrostriatal dopamine drives movement. Deplete the latter and Parkinsonism follows.","Muscle Relax":"Succinylcholine is depolarising. Curare and Pancuronium are non-depolarising. They block without activating the nicotinic receptor."};
+const treasures={"Skin":"The ABCDE of Melanoma: Asymmetry, Border, Colour, Diameter, Evolving. Following Langer's Lines ensures minimal tension on wound edges for superior healing.","Ballistics":"Rifling imparts gyroscopic stability to bullets. Tattooing, unburnt gunpowder in skin — lets forensic experts estimate range of fire to within centimetres.","Death":"The Post-Mortem Triad: Algor Mortis (cooling), Rigor Mortis (ATP stiffening), Livor Mortis (blood settling). Pillars of the Henssge Nomogram for time-of-death estimation.","Heart":"Impulses from the SA Node propagate through the Myocardium. Time is Muscle. Cardiomyocytes cannot regenerate once infarcted.","Lung":"Gas exchange at the Alveoli via passive diffusion. Without Surfactant from Type II pneumocytes, neonates develop Respiratory Distress Syndrome.","Neuro":"Motor fibres from the Frontal Lobe decussate in the Medullary Pyramids. Left hemisphere stroke causes right-sided hemiplegia.","Labor":"Oxytocin triggers contractions. Ergotamine manages PPH by sustaining uterine contraction.","Ear":"The Ossicular Chain (Malleus, Incus, Stapes) amplifies sound pressure 22x to bridge air and cochlear fluid.","Bacteria":"Gram staining reveals Peptidoglycan thickness. Penicillin and Vancomycin both target cell wall synthesis by different mechanisms.","Psych":"Mesolimbic overactivity causes Schizophrenia. Nigrostriatal destruction causes Parkinsonism.","Anesthesia":"General Anaesthesia requires Hypnosis, Analgesia, and Muscle Relaxation (e.g. Succinylcholine).","Diabetes":"Insulin activates GLUT4. Metformin reduces hepatic glucose output and boosts sensitivity.","Poison":"Cyanide blocks Cytochrome C Oxidase. Atropine blocks muscarinic receptors, reversing SLUDGE syndrome in organophosphate poisoning.","Vision":"Light: Cornea, Lens, Retina. Glaucoma is the Silent Thief of Sight. IOP silently damages the Optic Nerve.","CNS":"The BBB is so restrictive that CSF via Lumbar Puncture is the only way to confirm Meningitis.","Bone":"Osteoblasts build, Osteoclasts clear. Callus is the first sign of fracture healing.","Skull":"Fontanelles allow moulding during birth. Craniosynostosis restricts brain growth and needs surgical release.","Pregnancy":"HCG sustains the corpus luteum. Amniotic Fluid volume is a key indicator of fetal wellbeing.","Blood":"Heparin acts immediately. Warfarin takes days (inhibits Vit K). Aspirin is antiplatelet, not anticoagulant.","Jaundice":"Unconjugated bilirubin crosses the BBB causing Kernicterus. Phototherapy isomerises bilirubin for excretion.","Dopamine Seesaw":"Mesolimbic dopamine drives reward. Nigrostriatal dopamine drives movement. Deplete the latter and Parkinsonism follows.","Muscle Relax":"Succinylcholine is depolarising. Curare and Pancuronium are non-depolarising. They block without activating the nicotinic receptor."};
 
 // ============================================================
 // CARD HINTS MAP — shown on back face after long press
@@ -471,13 +471,16 @@ let timerSecondsLeft=ROUND_TIME,timerInterval=null;
 const OB_KEY='prepcombo_trained_v1';
 
 function goToStartScreen(){
+    try { getCtx(); } catch(e) {}
     playTone(440,'sine',0.2,0.15); haptic([15,8,15]);
     document.getElementById('splash-screen').style.display='none';
-    document.getElementById('start-screen').style.display='flex';
+    const ss = document.getElementById('start-screen');
+    ss.style.display='flex';
+    ss.style.flexDirection='column';
 }
 
 function goToTraining(){
-    getCtx();
+    try { getCtx(); } catch(e) {}
     document.getElementById('splash-screen').style.display='none';
     document.getElementById('start-screen').style.display='none';
     document.getElementById('skip-training-btn').style.display='inline-block';
@@ -992,6 +995,12 @@ function beginRealGame(){
     document.getElementById('training-complete').style.display='none';
     document.getElementById('start-screen').style.display='flex';
 }
+// Attach splash listener here — after all functions are defined
+document.getElementById('splash-screen').addEventListener('click', goToStartScreen);
+document.getElementById('splash-screen').addEventListener('touchend', function(e){
+    e.preventDefault();
+    goToStartScreen();
+}, {once:true});
 </script>
 </body>
 </html>
