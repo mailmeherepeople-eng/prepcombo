@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp \"C:\\\\Users\\\\3rdem\\\\Downloads\\\\prepcombo index.html\" \"C:\\\\Users\\\\3rdem\\\\Documents\\\\GitHub\\\\prepcombo\\\\index.html\")",
+      "Bash(grep -v \"^[[:space:]]*//\")"
+    ]
+  }
+}

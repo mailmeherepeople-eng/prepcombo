@@ -25,11 +25,9 @@
         body.dark .ob-steps,.dark .summary-round,.dark #final-rank-box { background:var(--surface2); border-color:var(--card-border); }
         body.dark #training-interface { background:var(--bg); }
         body.dark #coach-bar { background:var(--surface2); }
-        body.dark #wt-note { background:rgba(217,119,6,0.1) !important; }
-        body.dark #wt-note-title { color:#fbbf24 !important; }
-        body.dark #wt-note-body { color:#fcd34d !important; }
 
         /* DARK TOGGLE */
+        #dark-toggle { position:fixed; top:9px; right:9px; z-index:25000; background:rgba(0,0,0,0.18); border:1px solid rgba(255,255,255,0.12); cursor:pointer; font-size:1rem; padding:5px 7px; border-radius:8px; line-height:1; backdrop-filter:blur(4px); }
 
         /* CARD ENTRANCE ANIMATION */
         @keyframes cardEnter { from{opacity:0;transform:translateY(10px) scale(0.94);} to{opacity:1;transform:translateY(0) scale(1);} }
@@ -69,18 +67,15 @@
         #start-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:10000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:26px; text-align:center; overflow-y:auto; }
         #start-screen h1 { color:var(--gold); font-size:2rem; margin-bottom:6px; }
         .tagline { color:var(--accent); font-size:0.92rem; margin-bottom:22px; font-style:italic; }
-        .start-btn { padding:14px 20px; font-size:1rem; background:var(--gold); border:none; border-radius:12px; font-weight:700; cursor:pointer; color:#fff; box-shadow:0 4px 18px rgba(217,119,6,0.4); letter-spacing:0.02em; width:100%; text-align:center; }
-        .start-btns { display:flex; flex-direction:column; gap:10px; width:100%; max-width:340px; }
+        .start-btn { padding:15px 42px; font-size:1.05rem; background:var(--gold); border:none; border-radius:12px; font-weight:700; cursor:pointer; color:#fff; box-shadow:0 4px 18px rgba(217,119,6,0.4); letter-spacing:0.02em; }
 
-        #sidebar { display:none; }
-        #history-scroll { flex:1; overflow-x:auto; display:flex; align-items:center; gap:6px; padding:5px 6px; height:100%; }
-        #wrong-toast { transition:transform 0.25s cubic-bezier(0.4,0,0.2,1); }
+        #sidebar { width:100%; height:52px; background:var(--surface2); border-bottom:1px solid var(--card-border); padding:5px 8px; overflow-x:auto; display:flex; align-items:center; gap:6px; flex-shrink:0; }
         .history-item { min-width:110px; background:#f1f5f9; padding:5px 7px; border-radius:7px; font-size:0.6rem; border-left:3px solid var(--accent); color:var(--text-primary); white-space:nowrap; flex-shrink:0; line-height:1.4; }
         .history-item.hi-wrong { border-left-color:#ef4444; }
         .history-item.hi-hod { border-left-color:var(--gold); }
         #main { flex:1; padding:7px 8px 4px; display:flex; flex-direction:column; align-items:center; overflow:hidden; gap:5px; }
-        .stats-bar { width:100%; display:flex; align-items:center; gap:6px; background:var(--surface2); padding:7px 8px; border-radius:12px; border:1px solid var(--card-border); flex-shrink:0; }
-        .stat-item { flex:1; font-size:0.55rem; text-align:center; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
+        .stats-bar { width:100%; display:grid; background:var(--surface2); padding:7px 4px; border-radius:12px; border:1px solid var(--card-border); flex-shrink:0; }
+        .stat-item { font-size:0.55rem; text-align:center; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
         .stat-val { color:var(--text-primary); font-size:1rem; display:block; font-weight:900; line-height:1.1; }
         #score-val { color:var(--gold); } #streak-val { color:#ef4444; }
         #message { min-height:26px; font-size:0.78rem; color:var(--accent); font-weight:700; text-align:center; width:100%; flex-shrink:0; transition:color 0.2s; }
@@ -159,7 +154,6 @@
         .record-banner { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); z-index:15000; background:linear-gradient(135deg,#d97706,#fbbf24); color:#fff; font-size:1.6rem; font-weight:900; padding:16px 36px; border-radius:20px; letter-spacing:0.06em; pointer-events:none; animation:recordBanner 2.8s cubic-bezier(.4,2,.6,1) forwards; white-space:nowrap; box-shadow:0 8px 40px rgba(217,119,6,0.5); }
         @keyframes recordBanner { 0%{opacity:0;transform:translate(-50%,-50%) scale(0.4);} 18%{opacity:1;transform:translate(-50%,-50%) scale(1.08);} 28%{transform:translate(-50%,-50%) scale(1);} 70%{opacity:1;transform:translate(-50%,-50%) scale(1);} 100%{opacity:0;transform:translate(-50%,-50%) scale(0.9) translateY(-24px);} }
         .hi-nearmiss { font-size:0.55rem; color:#f97316; font-weight:700; margin-top:2px; }
-        #skip-btn { display:none; padding:8px; font-size:0.75rem; font-weight:700; background:var(--surface2); border:2px solid var(--accent); color:var(--accent); border-radius:10px; cursor:pointer; flex-shrink:0; width:100%; }
         #round-summary { width:90%; max-width:370px; display:flex; flex-direction:column; gap:8px; flex-shrink:0; }
         .summary-round { background:var(--surface2); border-radius:12px; padding:12px 14px; border:1px solid var(--card-border); text-align:left; }
         .summary-round h4 { font-size:0.7rem; color:var(--text-secondary); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
@@ -169,46 +163,10 @@
         .sp-badge { font-size:0.58rem; font-weight:800; padding:2px 6px; border-radius:10px; white-space:nowrap; }
         .badge-hod { background:#fef3c7; color:#92400e; } .badge-good { background:#dcfce7; color:#166534; }
         .badge-ok { background:#f1f5f9; color:#475569; } .badge-miss { background:#fee2e2; color:#991b1b; }
-
-        /* BACK BUTTON */
-        .back-btn { background:rgba(0,0,0,0.08); border:1px solid var(--card-border); border-radius:8px; padding:7px 13px; font-size:0.88rem; cursor:pointer; color:var(--text-secondary); line-height:1; transition:background 0.15s; font-weight:600; }
-        body.dark .back-btn { background:rgba(255,255,255,0.07); }
-        .back-btn:active { background:var(--surface); }
-
-        /* QUIT MODAL */
-        #quit-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:19000; flex-direction:column; align-items:center; justify-content:center; padding:30px; }
-        .quit-card { background:var(--surface2); border-radius:20px; padding:28px 24px; width:100%; max-width:320px; text-align:center; border:1px solid var(--card-border); }
-        .quit-card h2 { color:var(--text-primary); font-size:1.3rem; margin-bottom:8px; font-weight:900; }
-        .quit-card p { color:var(--text-secondary); font-size:0.85rem; margin-bottom:24px; line-height:1.55; }
-        .quit-btns { display:flex; gap:10px; }
-        .quit-btn { flex:1; padding:13px; border-radius:12px; font-weight:800; font-size:0.92rem; cursor:pointer; border:none; }
-
-        /* SETTINGS MODAL */
-        #settings-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:10600; flex-direction:column; overflow-y:auto; }
-        .settings-header { padding:58px 24px 16px; text-align:center; flex-shrink:0; }
-        .settings-pre { font-size:0.62rem; font-weight:700; letter-spacing:0.13em; text-transform:uppercase; color:var(--text-secondary); margin-bottom:6px; }
-        .settings-h1 { font-size:2rem; font-weight:900; color:var(--text-primary); margin:0; }
-        .settings-body { padding:0 16px 40px; display:flex; flex-direction:column; gap:14px; }
-        .settings-card { background:var(--surface2); border-radius:16px; border:1px solid var(--card-border); overflow:hidden; }
-        .settings-section-label { font-size:0.6rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-secondary); padding:14px 16px 6px; }
-        .settings-row { display:flex; align-items:center; justify-content:space-between; padding:8px 16px 14px; gap:12px; }
-        .settings-row-label { font-size:0.9rem; font-weight:700; color:var(--text-primary); }
-        .settings-divider { height:1px; background:var(--card-border); }
-        .vol-row { padding:4px 16px 14px; }
-        .vol-track { display:flex; align-items:center; gap:12px; }
-        .vol-pct { font-size:0.85rem; font-weight:800; color:var(--text-primary); min-width:40px; text-align:right; }
-        .volume-slider { -webkit-appearance:none; appearance:none; flex:1; height:4px; border-radius:2px; outline:none; cursor:pointer; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:var(--accent); cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
-        .volume-slider::-moz-range-thumb { width:22px; height:22px; border-radius:50%; background:var(--accent); cursor:pointer; border:none; }
-        .sett-toggle { position:relative; width:50px; height:28px; border-radius:14px; cursor:pointer; transition:background 0.25s; border:none; outline:none; flex-shrink:0; }
-        .sett-toggle.off { background:var(--card-border); }
-        .sett-toggle.on { background:var(--accent); }
-        .sett-toggle::after { content:''; position:absolute; top:4px; width:20px; height:20px; background:#fff; border-radius:50%; transition:left 0.22s; box-shadow:0 1px 4px rgba(0,0,0,0.28); }
-        .sett-toggle.off::after { left:4px; }
-        .sett-toggle.on::after { left:26px; }
     </style>
 </head>
 <body>
+<button id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
 <div id="splash-screen">
     <h1><span class="p1">Prep</span><span class="p2">Combo</span></h1>
     <p class="splash-sub">"Making it stick should be fun"</p>
@@ -216,7 +174,6 @@
 </div>
 
 <div id="onboarding-screen">
-    <button class="back-btn" style="position:absolute;top:14px;left:14px;" onclick="backFromOnboarding()">←</button>
     <h1>How to Play</h1>
     <p class="sub">PrepCombo: clinical combos against the clock</p>
     <div class="ob-steps">
@@ -235,10 +192,7 @@
 
 <div id="training-interface">
     <div id="coach-bar">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-            <button class="back-btn" style="padding:4px 10px;font-size:0.8rem;" onclick="backFromTraining()">←</button>
-            <span id="coach-step-label">Step 1 of 4</span>
-        </div>
+        <span id="coach-step-label">Step 1 of 4</span>
         <span id="coach-text">Long press any card to read its clinical hint</span>
         <div id="coach-dots">
             <div class="coach-dot active" id="dot-0"></div>
@@ -260,7 +214,6 @@
 </div>
 
 <div id="training-complete">
-    <button class="back-btn" style="position:absolute;top:14px;left:14px;" onclick="backFromTrainingComplete()">←</button>
     <h1>Training Complete!</h1>
     <p>You know how it works.<br>Time for the real thing.</p>
     <button class="ob-btn" style="max-width:280px;" onclick="beginRealGame()">Begin Rotation</button>
@@ -270,55 +223,32 @@
     <h1>PrepCombo</h1>
     <p class="tagline">"Making it stick should be fun"</p>
     <div style="background:var(--surface2);border-radius:14px;border:1px solid var(--card-border);padding:20px 22px;max-width:340px;width:100%;margin-bottom:24px;text-align:center;">
-        <p style="font-size:1.05rem;font-weight:800;color:var(--text-primary);line-height:1.4;margin-bottom:10px;">This is what fast clinical thinking feels like.</p>
-        <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:10px;">Every great clinician sees patterns others miss. This is where you find out if you're one of them.</p>
-        <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.6;">Who said learning can't be fun? Bite sized. 120 seconds per turn.</p>
+        <p style="font-size:1.05rem;font-weight:800;color:var(--text-primary);line-height:1.4;margin-bottom:10px;">Can you get the highest score before the clock runs out?</p>
+        <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:14px;">Match cards by subject. Unlock combos. Beat the timer. The faster you play, the more points you earn.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+            <div style="background:var(--surface);border-radius:10px;padding:10px 6px;"><div style="font-size:1.4rem;">⏱️</div><div style="font-size:0.6rem;font-weight:700;color:var(--text-secondary);margin-top:4px;">120 Seconds</div></div>
+            <div style="background:var(--surface);border-radius:10px;padding:10px 6px;"><div style="font-size:1.4rem;">🃏</div><div style="font-size:0.6rem;font-weight:700;color:var(--text-secondary);margin-top:4px;">3 Rounds</div></div>
+            <div style="background:var(--surface);border-radius:10px;padding:10px 6px;"><div style="font-size:1.4rem;">🏆</div><div style="font-size:0.6rem;font-weight:700;color:var(--text-secondary);margin-top:4px;">HOD Status</div></div>
+        </div>
     </div>
-    <button class="back-btn" style="position:absolute;top:14px;left:14px;" onclick="backFromStartScreen()">←</button>
-    <div class="start-btns">
-        <button class="start-btn" onclick="startGame()">Start Rotation</button>
-        <button class="start-btn" style="background:var(--surface2);color:var(--accent);border:2px solid var(--accent);box-shadow:none;" onclick="startDailyChallenge()">Daily Challenge 📅</button>
-        <div id="daily-msg" style="display:none;font-size:0.75rem;color:var(--text-secondary);text-align:center;padding:8px 14px;background:var(--surface2);border-radius:10px;border:1px solid var(--card-border);width:100%;"></div>
-        <button class="start-btn" style="background:var(--surface2);color:var(--gold);border:2px solid var(--gold);box-shadow:none;" onclick="goToTraining()">How to Play</button>
-        <button class="start-btn" style="background:var(--surface2);color:var(--text-secondary);border:1.5px solid var(--card-border);box-shadow:none;" onclick="openSettings()">⚙️ Settings</button>
-    </div>
+    <button class="start-btn" style="background:var(--surface2);color:var(--gold);border:2px solid var(--gold);box-shadow:none;margin-bottom:12px;" onclick="goToTraining()">How to Play</button>
+    <button class="start-btn" onclick="startGame()">Start Rotation</button>
 </div>
 
 <div id="game-interface" style="display:none;flex-direction:column;height:100dvh;width:100%;">
-    <div id="sidebar">
-        <div style="flex-shrink:0;padding:0 6px 0 6px;display:flex;align-items:center;gap:5px;">
-            <button onclick="openQuitModal()" aria-label="Quit game"
-                style="width:30px;height:30px;border-radius:7px;background:var(--surface);border:1px solid var(--card-border);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:var(--text-secondary);font-size:1rem;flex-shrink:0;">←</button>
-            <div style="position:relative;display:flex;align-items:center;flex-shrink:0;">
-                <button onclick="openLogbook()" aria-label="Open logbook"
-                    style="width:30px;height:30px;border-radius:7px;background:var(--surface);border:1px solid var(--card-border);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:var(--text-secondary);font-size:1rem;">&#128216;</button>
-                <div style="display:none;position:absolute;top:-2px;right:-4px;background:#ef4444;color:white;border-radius:10px;font-size:0.5rem;font-weight:800;min-width:14px;height:14px;align-items:center;justify-content:center;padding:0 3px;">0</div>
-            </div>
-            <div style="width:0.5px;height:18px;background:var(--card-border);flex-shrink:0;"></div>
-        </div>
-        <div id="history-scroll"><div id="history-list" style="display:contents;"></div></div>
-    </div>
+    <div id="sidebar"><div id="history-list" style="display:contents;"></div></div>
     <div id="main">
-        <div class="stats-bar">
-            <div style="position:relative;flex-shrink:0;">
-                <button id="logbook-btn" onclick="openLogbook()" aria-label="Open logbook"
-                    style="width:30px;height:30px;border-radius:7px;background:var(--surface);border:1px solid var(--card-border);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:var(--text-secondary);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18"/><line x1="10" y1="4" x2="10" y2="20"/><line x1="14" y1="12" x2="14.01" y2="12"/><line x1="14" y1="16" x2="14.01" y2="16"/><line x1="14" y1="8" x2="14.01" y2="8"/></svg>
-                </button>
-                <div id="logbook-badge" style="display:none;position:absolute;top:-2px;right:-4px;background:#ef4444;color:white;border-radius:10px;font-size:0.5rem;font-weight:800;min-width:14px;height:14px;align-items:center;justify-content:center;padding:0 3px;">0</div>
-            </div>
-            <div style="width:0.5px;height:18px;background:var(--card-border);flex-shrink:0;"></div>
-            <div class="stat-item">Round<span class="stat-val" id="round-num">1/3</span></div>
+        <div class="stats-bar" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;">
+            <div class="stat-item">Round<span class="stat-val" id="round-num">1</span>/3</div>
             <div class="stat-item">Turn<span class="stat-val" id="turn-num">1/3</span></div>
             <div class="stat-item">Score<span class="stat-val" id="score-val">0</span></div>
+            <div class="stat-item">Streak<span class="stat-val" id="streak-val" style="color:#ef4444;">0🔥</span></div>
             <div class="stat-item">Time<span class="stat-val" id="timer-val" style="color:#4f9e72;">120</span></div>
-            <span id="streak-val" style="display:none;">0🔥</span>
         </div>
         <div id="message">Tap to select. Long press for a hint.</div>
         <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
         <div id="community-pool"></div>
         <div id="submit-hint">Tap cards to select <span id="bonus-pill">+0 speed</span></div>
-        <button id="skip-btn" onclick="skipTurn()">Skip Turn (1 left)</button>
         <div id="buckets"></div>
     </div>
 </div>
@@ -339,7 +269,6 @@
 </div>
 
 <div id="result-screen">
-    <button class="back-btn" style="position:absolute;top:14px;left:14px;" onclick="backFromResult()">←</button>
     <h1>Rotation Complete</h1>
     <div id="final-rank-box">
         <h2 id="rank-title" style="color:var(--accent);margin:0;font-size:1.5rem;"></h2>
@@ -355,57 +284,6 @@
 </div>
 <div id="streak-banner"></div>
 
-<!-- QUIT CONFIRMATION MODAL -->
-<div id="quit-modal">
-    <div class="quit-card">
-        <h2>Quit Game?</h2>
-        <p>Your progress this rotation will be lost. Are you sure you want to quit?</p>
-        <div class="quit-btns">
-            <button class="quit-btn" style="background:var(--surface);color:var(--text-primary);" onclick="closeQuitModal()">Stay</button>
-            <button class="quit-btn" style="background:#ef4444;color:#fff;" onclick="quitGame()">Quit</button>
-        </div>
-    </div>
-</div>
-
-<!-- SETTINGS MODAL -->
-<div id="settings-modal">
-    <button class="back-btn" style="position:fixed;top:14px;left:14px;z-index:1;" onclick="closeSettings()">←</button>
-    <div class="settings-header">
-        <div class="settings-pre">Preferences</div>
-        <div class="settings-h1">Settings</div>
-    </div>
-    <div class="settings-body">
-        <div class="settings-card">
-            <div class="settings-section-label">Audio Volume</div>
-            <div class="vol-row">
-                <div class="vol-track">
-                    <input type="range" class="volume-slider" id="vol-slider" min="0" max="100" value="70" oninput="updateVolume(this.value)">
-                    <span class="vol-pct" id="vol-pct">70%</span>
-                </div>
-            </div>
-            <div class="settings-divider"></div>
-            <div class="settings-row">
-                <span class="settings-row-label">Mute</span>
-                <button class="sett-toggle off" id="mute-toggle" onclick="toggleMute()"></button>
-            </div>
-        </div>
-        <div class="settings-card">
-            <div class="settings-section-label">Haptics / Vibration</div>
-            <div class="settings-row">
-                <span class="settings-row-label">Vibration</span>
-                <button class="sett-toggle on" id="haptic-toggle" onclick="toggleHaptic()"></button>
-            </div>
-        </div>
-        <div class="settings-card">
-            <div class="settings-section-label">Display</div>
-            <div class="settings-row">
-                <span class="settings-row-label">Dark Mode</span>
-                <button class="sett-toggle off" id="dark-mode-toggle" onclick="toggleDark()"></button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
 // ============================================================
 // DEVELOPER HANDOFF HOOK
@@ -417,7 +295,7 @@
 const AudioCtx=window.AudioContext||window.webkitAudioContext;
 let audioCtx=null;
 function getCtx(){if(!audioCtx)audioCtx=new AudioCtx();return audioCtx;}
-function playTone(freq,type,dur,vol,delay=0){if(gameMuted)return;try{const ctx=getCtx(),osc=ctx.createOscillator(),g=ctx.createGain();osc.connect(g);g.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;const t=ctx.currentTime+delay;const sv=vol*(gameVolume/100);g.gain.setValueAtTime(sv,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);osc.start(t);osc.stop(t+dur);}catch(e){}}
+function playTone(freq,type,dur,vol,delay=0){try{const ctx=getCtx(),osc=ctx.createOscillator(),g=ctx.createGain();osc.connect(g);g.connect(ctx.destination);osc.type=type;osc.frequency.value=freq;const t=ctx.currentTime+delay;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);osc.start(t);osc.stop(t+dur);}catch(e){}}
 function sndSelect(){playTone(520,'sine',0.07,0.2);}
 function sndDeselect(){playTone(300,'sine',0.07,0.14);}
 function sndFlip(){playTone(380,'sine',0.1,0.15);playTone(520,'sine',0.08,0.1,0.08);}
@@ -428,20 +306,8 @@ function sndStreak(){playTone(660,'sawtooth',0.18,0.2);playTone(880,'sawtooth',0
 function sndRound(){playTone(180,'sine',0.3,0.4);playTone(360,'sine',0.2,0.25,0.2);}
 function sndVictory(){[392,523,659,784,1047].forEach((f,i)=>playTone(f,'sine',0.5,0.28,i*0.14));}
 function sndError(){playTone(160,'square',0.12,0.15);}
-function haptic(p){if(!gameHaptic)return;if(navigator.vibrate)navigator.vibrate(p);}
+function haptic(p){if(navigator.vibrate)navigator.vibrate(p);}
 const H_TAP=10,H_SELECT=20,H_SUBMIT=[30,20,50],H_WRONG=[50,30,50,30,50],H_HOD=[60,40,60,40,80],H_ERROR=[20,15,20];
-
-// ============================================================
-// SETTINGS STATE
-// ============================================================
-let gameVolume=70,gameMuted=false,gameHaptic=true;
-const VOL_KEY='prepcombo_vol',MUTE_KEY='prepcombo_mute',HAPTIC_KEY='prepcombo_haptic';
-function loadSettings(){
-    gameVolume=parseInt(localStorage.getItem(VOL_KEY)||'70');
-    gameMuted=localStorage.getItem(MUTE_KEY)==='1';
-    gameHaptic=localStorage.getItem(HAPTIC_KEY)!=='0';
-}
-loadSettings();
 
 // ============================================================
 // 22 SUBJECTS
@@ -610,13 +476,8 @@ const allCards=[
 {name:'Vancomycin',emoji:'💊🦠',buckets:['Pharmacology','Microbiology'],tags:['Bacteria'],hint:'Last resort for Gram-positive. Inhibits cell wall differently to penicillin',hintLast:'Glycopeptide that blocks peptidoglycan cross-linking at a different site to penicillin'},
 {name:'Kwashiorkor',emoji:'👶😢',buckets:['PSM','Pediatrics'],tags:['Nutrition'],hint:'Protein deficiency with adequate calories. Oedema and fatty liver',hintLast:'Flaky paint rash and pot belly. Kwashiorkor means displaced child in Ghanaian'},
 {name:'Pellagra',emoji:'🌽❌',buckets:['PSM','Biochemistry'],tags:['Nutrition'],hint:'Niacin deficiency. 3 Ds: Dermatitis, Diarrhoea, Dementia',hintLast:'Niacin made from tryptophan. Maize-eating populations most at risk'},
-{name:'Scurvy',emoji:'🍋',buckets:['Dermatology','PSM'],tags:['Nutrition'],hint:'Vitamin C deficiency. Perifollicular haemorrhage, corkscrew hairs.',hintLast:'Ascorbic acid deficiency. Bleeding gums and poor wound healing are hallmarks.'},
 {name:'DNA Repair',emoji:'🧬🔧',buckets:['Biochemistry','Pathology'],tags:['DNA/genetics'],hint:'Cells fix damaged DNA or trigger apoptosis. Failure causes cancer',hintLast:'Nucleotide excision, mismatch repair, base excision. Failure leads to mutation accumulation'},
-{name:'PCR',emoji:'🧬🔍',buckets:['Biochemistry','Pathology'],tags:['DNA/genetics'],hint:'Amplifies DNA exponentially. Detects any sequence from a single copy.',hintLast:'Polymerase chain reaction. Used in diagnosis, forensics, and genetic screening.'},
-{name:'CRISPR',emoji:'✂️🧬',buckets:['Biochemistry','Microbiology'],tags:['DNA/genetics'],hint:'Cas9 cuts DNA at precise locations. Enables targeted gene correction.',hintLast:'Adapted from bacterial defence against viruses. Revolutionising inherited disease treatment.'},
 {name:'Sepsis',emoji:'🌡️🩸',buckets:['Microbiology','Surgery'],tags:['Sepsis'],hint:'Life-threatening organ dysfunction from infection. qSOFA screens it',hintLast:'SIRS plus organ dysfunction. Lactate above 2 means occult septic shock'},
-{name:'Bacteraemia',emoji:'🩸🦠',buckets:['Microbiology','Pathology'],tags:['Sepsis'],hint:'Viable bacteria in the blood. Usually transient, but seeds distant sites.',hintLast:'Differs from septicaemia. Blood culture is the diagnostic gold standard.'},
-{name:'Organ Failure',emoji:'🫀⚠️',buckets:['Pathology','Physiology'],tags:['Sepsis'],hint:'End-organ dysfunction driven by cytokine storm. SOFA score tracks it.',hintLast:'Sequential organ failure. Liver, kidney, lung, and heart all at risk in sepsis.'},
 ];
 
 // Build tag map
@@ -659,9 +520,9 @@ const treasures={
     'Vaccines':'BCG protects against miliary TB and meningitis but not reliably against pulmonary TB. OPV replicates in the gut and is shed in stool. Cold chain failure destroys live vaccines irreversibly.',
     'Controlled substances':'Cannabis has the longest urine detection window of common drugs at up to 30 days. Cocaine is a sympathomimetic that causes nasal septum perforation with chronic use. Heroin causes pinpoint pupils, respiratory depression, and leaves track marks.',
     'Arrhythmia':'AF has no P waves and irregular R-R intervals. Digoxin toxicity causes yellow-green vision and heart block. Amiodarone is the last resort antiarrhythmic with multiple organ toxicities.',
-    'Nutrition':'Kwashiorkor is protein deficiency with oedema and fatty liver. Pellagra is niacin deficiency presenting with the 3 Ds. Scurvy is vitamin C deficiency causing perifollicular haemorrhage and corkscrew hairs.',
-    'Sepsis':'Sepsis is life-threatening organ dysfunction caused by dysregulated host response. Bacteraemia is viable bacteria in the bloodstream. Organ failure develops when the inflammatory cascade overwhelms compensatory mechanisms.',
-    'DNA/genetics':'DNA repair pathways include nucleotide excision, base excision, and mismatch repair. PCR amplifies specific sequences for rapid diagnosis. CRISPR-Cas9 enables precise gene editing at targeted sites.',
+    'Nutrition':'Kwashiorkor is protein deficiency with oedema and fatty liver. Pellagra is niacin deficiency presenting with the 3 Ds. Both are seen in resource-limited settings.',
+    'Sepsis':'Sepsis is life-threatening organ dysfunction caused by dysregulated host response to infection. qSOFA score screens for it. Lactate above 2 mmol/L defines occult septic shock.',
+    'DNA/genetics':'DNA repair pathways include nucleotide excision, base excision, and mismatch repair. Failure leads to mutation accumulation. Inherited defects cause syndromes like Xeroderma Pigmentosum.',
 };
 
 // ============================================================
@@ -672,14 +533,14 @@ const treasures={
 const ROUNDS=3,COMBOS_PER_ROUND=6;
 let usedTagsLastRound=[];
 
-function pickRoundTags(rng=Math.random){
+function pickRoundTags(){
     // Fix: use >=3 so Bacteria (5 cards) is now eligible
     const allTags=Object.keys(tagMap).filter(t=>tagMap[t].length>=3);
     // Filter out tags used last round
     let available=allTags.filter(t=>!usedTagsLastRound.includes(t));
     if(available.length<COMBOS_PER_ROUND)available=allTags; // fallback if not enough
     // Shuffle
-    const shuffled=[...available].sort(()=>rng()-0.5);
+    const shuffled=[...available].sort(()=>Math.random()-0.5);
     // Pick 6, checking subject spread (no more than 3 cards from same subject)
     const picked=[];
     const subjectCount={};
@@ -706,15 +567,15 @@ function pickRoundTags(rng=Math.random){
     return picked;
 }
 
-function buildRound(tags,rng=Math.random){
+function buildRound(tags){
     const cards=[];
     tags.forEach(tag=>{
         const pool=tagMap[tag];
         // If tag has more than 3 cards, pick 3 at random each time (Bacteria has 5)
-        const chosen=pool.length===3?pool:[...pool].sort(()=>rng()-0.5).slice(0,3);
+        const chosen=pool.length===3?pool:[...pool].sort(()=>Math.random()-0.5).slice(0,3);
         chosen.forEach(c=>cards.push({...c,activeTag:tag}));
     });
-    return cards.sort(()=>rng()-0.5);
+    return cards.sort(()=>Math.random()-0.5);
 }
 
 // ============================================================
@@ -742,8 +603,6 @@ const SHARE_URL='https://prepladder.com/prepcombo';
 const HS_KEY='prepcombo_hs';
 function getHS(){return parseInt(localStorage.getItem(HS_KEY)||'0');}
 function saveHS(s){localStorage.setItem(HS_KEY,String(s));}
-let isDailyMode=false,dailyDate='';
-let hodStreak=0,skipsRemaining=1,flipLocked=false;
 
 // Score count-up animation
 function animateCount(el,from,to,ms=1300){
@@ -764,31 +623,16 @@ function showRecordBanner(){
     setTimeout(()=>b.remove(),3000);
 }
 
-let generatedRounds=[];
-
-function seededRand(seed){
-    let s=seed%2147483647;
-    return ()=>{s=s*16807%2147483647;return(s-1)/2147483646;};
-}
-
-function generateRounds(rng=Math.random){
-    usedTagsLastRound=[];
-    generatedRounds.length=0;
-    for(let i=0;i<ROUNDS;i++){
-        const tags=pickRoundTags(rng);
-        generatedRounds.push({tags,cards:buildRound(tags,rng)});
-    }
+// Pre-generate all 3 rounds upfront so we can reference them in summary
+const generatedRounds=[];
+for(let i=0;i<ROUNDS;i++){
+    const tags=pickRoundTags();
+    generatedRounds.push({tags,cards:buildRound(tags)});
 }
 
 // TIMER
 function startTimer(){timerSecondsLeft=ROUND_TIME;clearInterval(timerInterval);updateTimerUI();timerInterval=setInterval(()=>{timerSecondsLeft--;updateTimerUI();if(timerSecondsLeft<=0){clearInterval(timerInterval);timerExpired();}},1000);}
 function stopTimer(){clearInterval(timerInterval);}
-function pauseTimer(){clearInterval(timerInterval);}
-function resumeTimer(){
-    clearInterval(timerInterval);
-    updateTimerUI();
-    timerInterval=setInterval(()=>{timerSecondsLeft--;updateTimerUI();if(timerSecondsLeft<=0){clearInterval(timerInterval);timerExpired();}},1000);
-}
 function updateTimerUI(){
     const pct=timerSecondsLeft/ROUND_TIME;
     const tv=document.getElementById('timer-val'),bar=document.getElementById('timer-bar'),pill=document.getElementById('bonus-pill');
@@ -802,19 +646,10 @@ function updateTimerUI(){
 function getSpeedBonus(){return Math.round((timerSecondsLeft/ROUND_TIME)*100);}
 function timerExpired(){
     haptic([40,20,40,20,40]);playTone(200,'square',0.3,0.3);
-    gameLog.push({round:currentRound,turn:currentTurn,bucket:'',cards:'(time expired)',pts:0,mult:1,correct:false,skipped:true});
+    gameLog.push({round:currentRound,bucket:'',cards:'(time expired)',pts:0,mult:1,correct:false,skipped:true});
     document.getElementById('message').innerText='Time\'s up. Moving on...';
     selectedCards.forEach(c=>c.el.classList.remove('selected'));selectedCards=[];
-    updateBucketState();
-    const completedRound=currentRound;
-    currentTurn=1;currentRound++;
-    if(typeof window.onPrepComboRound==='function'){
-        window.onPrepComboRound({
-            round:completedRound,
-            plays:gameLog.filter(p=>p.round===completedRound),
-            roundScore:gameLog.filter(p=>p.round===completedRound).reduce((a,p)=>a+p.pts,0)
-        });
-    }
+    updateBucketState();currentTurn=1;currentRound++;
     if(currentRound>=ROUNDS)setTimeout(endGame,1000);
     else setTimeout(()=>showRoundSplash(currentRound+1),1000);
 }
@@ -846,32 +681,6 @@ function beginRealGame(){
 function startGame(){
     try{getCtx();}catch(e){}
     playTone(440,'sine',0.2,0.2);haptic([20,10,20]);
-    isDailyMode=false;
-    currentRound=0;currentTurn=1;score=0;streak=0;hodStreak=0;skipsRemaining=1;flipLocked=false;selectedCards=[];gameLog=[];
-    generateRounds();
-    document.getElementById('start-screen').style.display='none';
-    document.getElementById('game-interface').style.display='flex';
-    updateLogbookBadge();
-    loadRound();
-}
-
-function startDailyChallenge(){
-    const today=new Date().toISOString().slice(0,10);
-    const existing=localStorage.getItem('prepcombo_daily_'+today);
-    if(existing!==null){
-        const msgEl=document.getElementById('daily-msg');
-        msgEl.style.display='block';
-        msgEl.innerText='Come back tomorrow. Today\'s score: '+existing+' pts';
-        return;
-    }
-    try{getCtx();}catch(e){}
-    playTone(440,'sine',0.2,0.2);haptic([20,10,20]);
-    isDailyMode=true;dailyDate=today;
-    currentRound=0;currentTurn=1;score=0;streak=0;hodStreak=0;skipsRemaining=1;flipLocked=false;selectedCards=[];gameLog=[];
-    updateLogbookBadge();
-    const seed=today.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-    generateRounds(seededRand(seed));
-    document.getElementById('daily-msg').style.display='none';
     document.getElementById('start-screen').style.display='none';
     document.getElementById('game-interface').style.display='flex';
     loadRound();
@@ -893,8 +702,6 @@ function updateBucketState(){
     if(ok){hint.style.color='var(--accent)';hint.childNodes[0].textContent='3 selected. Tap a subject  ';pill.style.display='inline-block';}
     else{hint.style.color='var(--text-secondary)';hint.childNodes[0].textContent=selectedCards.length===0?'Tap cards to select  ':selectedCards.length+' selected. Pick '+(3-selectedCards.length)+' more  ';pill.style.display='none';}
     if(currentTurn===3)updateComboHints();
-    const skipBtn=document.getElementById('skip-btn');
-    if(skipBtn){skipBtn.style.display=(ok&&skipsRemaining>0)?'block':'none';}
 }
 
 // CARD FACTORY
@@ -908,7 +715,7 @@ function makeCard(data,pool,tapFn,longPressFn){
     el.addEventListener('touchstart',(e)=>{
         longPressFired=false;moved=false;startX=e.touches[0].clientX;startY=e.touches[0].clientY;
         el.classList.add('pressing');
-        pressTimer=setTimeout(()=>{if(!moved&&!el.classList.contains('hidden')&&longPressFn&&!flipLocked){longPressFired=true;el.classList.remove('pressing');longPressFn(el,data);}},500);
+        pressTimer=setTimeout(()=>{if(!moved&&!el.classList.contains('hidden')){longPressFired=true;el.classList.remove('pressing');longPressFn(el,data);}},500);
     },{passive:true});
     el.addEventListener('touchmove',(e)=>{
         const dx=Math.abs(e.touches[0].clientX-startX),dy=Math.abs(e.touches[0].clientY-startY);
@@ -921,7 +728,7 @@ function makeCard(data,pool,tapFn,longPressFn){
     });
     el.addEventListener('touchcancel',()=>{clearTimeout(pressTimer);el.classList.remove('pressing');longPressFired=false;moved=false;});
     let mTimer=null,mLong=false;
-    el.addEventListener('mousedown',()=>{mLong=false;mTimer=setTimeout(()=>{if(longPressFn&&!flipLocked){mLong=true;longPressFn(el,data);}},500);});
+    el.addEventListener('mousedown',()=>{mLong=false;mTimer=setTimeout(()=>{mLong=true;longPressFn(el,data);},500);});
     el.addEventListener('mouseup',()=>{clearTimeout(mTimer);if(!mLong&&!el.classList.contains('hidden'))tapFn(el,data);mLong=false;});
     el.addEventListener('mouseleave',()=>{clearTimeout(mTimer);mLong=false;});
     pool.appendChild(el);return el;
@@ -934,7 +741,6 @@ function loadRound(){
     currentRoundTags=roundData.tags;
     currentRoundBuckets=getBucketsForRound(currentRoundCards);
     buildBuckets(currentRoundBuckets);
-    flipLocked=(currentRound===2&&currentTurn<3);
     currentRoundCards.forEach(data=>{
         makeCard(data,pool,(el,data)=>tapSelectCard(el,data),(el,data)=>longPressFlipCard(el,data));
     });
@@ -944,12 +750,10 @@ function loadRound(){
         el.classList.add('entering');
         setTimeout(()=>el.classList.remove('entering'),(i*22)+400);
     });
-    document.getElementById('round-num').innerText=(currentRound+1)+'/3';
+    document.getElementById('round-num').innerText=currentRound+1;
     document.getElementById('turn-num').innerText=currentTurn+'/3';
     updateBucketState();
-    document.getElementById('message').innerText=flipLocked
-        ?'Final Exam Mode. No hints until the last turn.'
-        :'Tap to select. Long press for a hint.';
+    document.getElementById('message').innerText='Tap to select. Long press for a hint.';
     startTimer();
 }
 
@@ -1005,23 +809,22 @@ function dropInBucket(bucketId,bucketEl){
             nearMiss='None of those belong to '+subjectName+'.';
         }
 
+        const msg=document.getElementById('message');
+        // Show near-miss on 2/3; show funny message otherwise
+        if(correctCount===2){
+            msg.innerText=nearMiss+' (+'+consolation+')';
+        }else{
+            msg.innerText=wrongMessages[Math.floor(Math.random()*wrongMessages.length)]+' (+'+consolation+')';
+        }
+        msg.classList.add('wrong');setTimeout(()=>msg.classList.remove('wrong'),600);
         showScorePop('+'+consolation,bucketEl,true);
-        streak=0;hodStreak=0;document.getElementById('streak-val').innerText='0🔥';
-        gameLog.push({round:currentRound,turn:currentTurn,bucket:bucketId,cards:selectedCards.map(c=>c.data.name).join(', '),pts:consolation,mult:1,speedBonus:0,correct:false,hod:false,correctCount,nearMissNote:nearMiss,activeTag:null,cardDetails:selectedCards.map(c=>({name:c.data.name,subjectColor:(subjectById[c.data.buckets[0]]||{color:'#64748b'}).color,isOddOne:!c.data.buckets.includes(bucketId)}))});
+        streak=0;document.getElementById('streak-val').innerText='0🔥';
+        gameLog.push({round:currentRound,bucket:bucketId,cards:selectedCards.map(c=>c.data.name).join(', '),pts:consolation,mult:1,speedBonus:0,correct:false,hod:false,correctCount});
         const entry=document.createElement('div');entry.className='history-item hi-wrong';
         entry.innerHTML='<strong>✗ '+subjectName+':</strong> '+selectedCards.map(c=>c.data.name).join(', ')
             +'<div class="hi-nearmiss">'+nearMiss+'</div>';
         document.getElementById('history-list').prepend(entry);
-        const msg=document.getElementById('message');
-        msg.innerText='(+'+consolation+' consolation pts)';
-        msg.classList.add('wrong');setTimeout(()=>msg.classList.remove('wrong'),800);
-        // Capture state before advancing (advanceTurn modifies currentRound/currentTurn)
-        const capturedRound=currentRound,capturedTurn=currentTurn,capturedCards=selectedCards.slice();
-        updateLogbookBadge();
-        selectedCards=[];updateBucketState();
-        advanceTurn();
-        showWrongToast(bucketId,capturedCards,nearMiss,capturedRound,capturedTurn);
-        return;
+        selectedCards=[];updateBucketState();advanceTurn();return;
     }
     sndSubmit();haptic(H_SUBMIT);
     let base=0;selectedCards.forEach(c=>{base+=c.data.buckets.includes(bucketId)?10:2;});
@@ -1031,56 +834,30 @@ function dropInBucket(bucketId,bucketEl){
     if(streak>=3)showStreakBanner(streak);
     if(bucketEl){bucketEl.classList.add('pulse-green');setTimeout(()=>bucketEl.classList.remove('pulse-green'),600);}
     showScorePop('+'+pts,bucketEl,false);
-    gameLog.push({round:currentRound,turn:currentTurn,bucket:bucketId,cards:selectedCards.map(c=>c.data.name).join(', '),pts,mult,speedBonus,correct:true,hod:mult===20,correctCount,nearMissNote:null,activeTag,cardDetails:selectedCards.map(c=>({name:c.data.name,subjectColor:(subjectById[c.data.buckets[0]]||{color:'#64748b'}).color,isOddOne:false}))});
+    gameLog.push({round:currentRound,bucket:bucketId,cards:selectedCards.map(c=>c.data.name).join(', '),pts,mult,speedBonus,correct:true,hod:mult===20});
     const entry=document.createElement('div');entry.className='history-item'+(mult===20?' hi-hod':'');
     entry.innerHTML='<strong>'+(subjectById[bucketId]||{name:bucketId}).name+':</strong> '+selectedCards.map(c=>c.data.name).join(', ');
     document.getElementById('history-list').prepend(entry);
     selectedCards.forEach(c=>{c.el.classList.add('hidden');c.el.classList.remove('selected','flipped');});
     selectedCards=[];updateBucketState();
     if(mult===20&&activeTag){
-        hodStreak++;
         document.getElementById('message').innerText='HOD Status! +'+pts;
-        setTimeout(()=>triggerHouseStatus(activeTag,treasures[activeTag]||'',activeTag==='Controlled substances',hodStreak),300);
+        setTimeout(()=>triggerHouseStatus(activeTag,treasures[activeTag]||'',activeTag==='Controlled substances'),300);
     }else{
-        hodStreak=0;
         document.getElementById('message').innerText='+'+pts+' (speed +'+speedBonus+')  '+correctMessages[Math.floor(Math.random()*correctMessages.length)];
     }
-    updateLogbookBadge();
-    advanceTurn();
-}
-
-function skipTurn(){
-    if(skipsRemaining<=0||selectedCards.length!==3)return;
-    selectedCards.forEach(c=>c.el.classList.remove('selected'));
-    selectedCards=[];
-    skipsRemaining--;
-    hodStreak=0;
-    document.getElementById('skip-btn').style.display='none';
-    document.getElementById('message').innerText='Skip used. Cards returned to pool.';
     advanceTurn();
 }
 
 function advanceTurn(){
-    closeWrongToast();
     currentTurn++;
     if(currentTurn>3){
-        const completedRound=currentRound;
         currentTurn=1;currentRound++;stopTimer();
-        if(typeof window.onPrepComboRound==='function'){
-            window.onPrepComboRound({
-                round:completedRound,
-                plays:gameLog.filter(p=>p.round===completedRound),
-                roundScore:gameLog.filter(p=>p.round===completedRound).reduce((a,p)=>a+p.pts,0)
-            });
-        }
         if(currentRound>=ROUNDS)setTimeout(endGame,700);
         else showRoundSplash(currentRound+1);
     }else{
         document.getElementById('turn-num').innerText=currentTurn+'/3';
-        if(currentTurn===3){
-            revealLastTurnHints();
-            if(flipLocked){flipLocked=false;document.getElementById('message').innerText='Hints unlocked. Long press to flip.';}
-        }
+        if(currentTurn===3)revealLastTurnHints();
     }
 }
 
@@ -1105,7 +882,6 @@ function showStreakBanner(n){
     setTimeout(()=>{b.style.display='none';},1900);
 }
 function showRoundSplash(n){
-    closeWrongToast();
     sndRound();haptic([40,20,60]);stopTimer();
     // Update round progress dots
     for(let i=0;i<ROUNDS;i++){
@@ -1119,19 +895,16 @@ function showRoundSplash(n){
     document.getElementById('round-splash').style.display='flex';
     setTimeout(()=>{document.getElementById('round-splash').style.display='none';loadRound();},1800);
 }
-function launchConfetti(gold=false,extra=0){
+function launchConfetti(gold=false){
     const cols=gold
         ?['#fbbf24','#f59e0b','#d97706','#fcd34d','#fff7ed','#ffffff']
         :['#d97706','#ef4444','#22c55e','#3b82f6','#a855f7','#ec4899','#f8fafc'];
-    const count=(gold?80:55)+extra;
+    const count=gold?80:55;
     for(let i=0;i<count;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.left=Math.random()*100+'vw';c.style.background=cols[Math.floor(Math.random()*cols.length)];c.style.width=(Math.random()*7+4)+'px';c.style.height=(Math.random()*7+4)+'px';c.style.borderRadius=Math.random()>0.5?'50%':'2px';c.style.animationDuration=(Math.random()*1.4+1.1)+'s';c.style.animationDelay=(Math.random()*0.6)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2800);}
 }
 
-function triggerHouseStatus(tag,text,isSnoop=false,hodChain=1){
-    sndHOD();haptic(H_HOD);
-    if(hodChain>=3){launchConfetti(true);haptic([60,40,60,40,80,40,100]);}
-    else if(hodChain===2){launchConfetti(false,20);}
-    else{launchConfetti();}
+function triggerHouseStatus(tag,text,isSnoop=false){
+    sndHOD();haptic(H_HOD);launchConfetti();
     const gifEl=document.getElementById('house-gif');
     const titleEl=document.getElementById('hod-title');
     const fallbackEl=document.getElementById('hod-emoji-fallback');
@@ -1140,18 +913,11 @@ function triggerHouseStatus(tag,text,isSnoop=false,hodChain=1){
     gifEl.style.display='';fallbackEl.style.display='none';
     // GIF error fallback
     gifEl.onerror=()=>{gifEl.style.display='none';fallbackEl.style.display='block';fallbackEl.innerText=isSnoop?'🌿':'🏆';};
-    if(hodChain>=3){
-        titleEl.innerText='Full Professorship!';
-    }else if(hodChain===2){
-        titleEl.innerText='Double Department!';
-    }else if(isSnoop){
+    if(isSnoop){
         titleEl.innerText='Snoop Approved 🌿';
+        gifEl.src='https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHVzb2VtdGprMXplaHUwdHRhZmpnN3Q4ZWR5ZzFsZGQzYXptdGV1MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7qDSOvfaCO9b3MlO/giphy.gif';
     }else{
         titleEl.innerText='HOD Status Unlocked';
-    }
-    if(isSnoop){
-        gifEl.src='https://media2.giphy.com/media/JTzC9evhVwykwiJ28g/giphy.gif';
-    }else{
         gifEl.src='https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3MzaTV0ZXF3bjJldDQ3eTEwcjEycTBuY2d3Y2Z5OTd3bGx5OTl4ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ZZiLDJ98R2GOY/giphy.gif';
     }
     badgeEl.innerText=tag;
@@ -1204,14 +970,14 @@ function endGame(){
     const hsEl=document.getElementById('hs-display');
     if(isNew&&prevHS>0){
         hsEl.innerText='Previous best: '+prevHS+' pts';
-        hsEl.classList.toggle('hs-new',true);
+        hsEl.className='hs-display hs-new';
     }else if(isNew){
         hsEl.innerText='First score on record.';
-        hsEl.classList.toggle('hs-new',true);
+        hsEl.className='hs-display hs-new';
     }else if(prevHS>0){
         const delta=prevHS-score;
         hsEl.innerText='Your best: '+prevHS+' pts'+(delta>0?'   '+delta+' pts off your best':'');
-        hsEl.classList.toggle('hs-new',false);
+        hsEl.className='hs-display';
     }else{
         hsEl.innerText='';hsEl.style.display='none';
     }
@@ -1238,26 +1004,15 @@ function endGame(){
         animateCount(scoreEl,0,score,1300);
     }
 
-    if(isDailyMode){
-        document.querySelector('#result-screen h1').innerText='Daily Rotation Complete';
-        localStorage.setItem('prepcombo_daily_'+dailyDate,String(score));
-    }else{
-        document.querySelector('#result-screen h1').innerText='Rotation Complete';
-    }
     buildSummary();
-    const result={score,rank:t,plays:gameLog,timestamp:new Date().toISOString(),daily:isDailyMode||undefined};
+    const result={score,rank:t,plays:gameLog,timestamp:new Date().toISOString()};
     if(typeof window.onPrepComboEnd==='function')window.onPrepComboEnd(result);
 }
 
 function shareScore(){
+    const rank=document.getElementById('rank-title').innerText;
     const sc=document.getElementById('final-score-val').innerText;
-    let text;
-    if(isDailyMode){
-        text='PrepCombo Daily - '+dailyDate+' - '+sc+' pts\nCan you beat me? '+SHARE_URL;
-    }else{
-        const rank=document.getElementById('rank-title').innerText;
-        text='I scored '+sc+' pts on PrepCombo and ranked "'+rank+'" 🏆\n\nCan you beat me? Powered by PrepLadder.\n'+SHARE_URL;
-    }
+    const text='I scored '+sc+' pts on PrepCombo and ranked "'+rank+'" 🏆\n\nCan you beat me? Powered by PrepLadder.\n'+SHARE_URL;
     if(navigator.share){navigator.share({title:'PrepCombo',text}).catch(()=>{});}
     else{navigator.clipboard.writeText(text).then(()=>{const btn=document.querySelector('button[onclick="shareScore()"]');const orig=btn.innerText;btn.innerText='Copied to clipboard';setTimeout(()=>{btn.innerText=orig;},2000);}).catch(()=>{alert(text);});}
 }
@@ -1403,320 +1158,22 @@ function showTrainingComplete(){
     localStorage.setItem(OB_KEY,'1');
 }
 
-// ============================================================
-// SETTINGS MODAL
-// ============================================================
-function openSettings(){
-    const s=document.getElementById('settings-modal');
-    const slider=document.getElementById('vol-slider');
-    slider.value=gameVolume;
-    document.getElementById('vol-pct').innerText=gameVolume+'%';
-    updateSliderFill(gameVolume);
-    document.getElementById('mute-toggle').className='sett-toggle '+(gameMuted?'on':'off');
-    document.getElementById('haptic-toggle').className='sett-toggle '+(gameHaptic?'on':'off');
-    document.getElementById('dark-mode-toggle').className='sett-toggle '+(document.body.classList.contains('dark')?'on':'off');
-    s.style.display='flex';
-}
-function closeSettings(){document.getElementById('settings-modal').style.display='none';}
-function updateVolume(val){
-    gameVolume=parseInt(val);
-    document.getElementById('vol-pct').innerText=gameVolume+'%';
-    updateSliderFill(gameVolume);
-    localStorage.setItem(VOL_KEY,String(gameVolume));
-    // Play a brief preview tone (not gated by gameMuted so user can hear it)
-    try{const ctx=getCtx(),osc=ctx.createOscillator(),g=ctx.createGain();osc.connect(g);g.connect(ctx.destination);osc.type='sine';osc.frequency.value=520;const t=ctx.currentTime;const sv=0.18*(gameVolume/100);g.gain.setValueAtTime(sv,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.09);osc.start(t);osc.stop(t+0.09);}catch(e){}
-}
-function updateSliderFill(val){
-    const s=document.getElementById('vol-slider');
-    if(s)s.style.background=`linear-gradient(to right,var(--accent) ${val}%,var(--card-border) ${val}%)`;
-}
-function toggleMute(){
-    gameMuted=!gameMuted;
-    document.getElementById('mute-toggle').className='sett-toggle '+(gameMuted?'on':'off');
-    localStorage.setItem(MUTE_KEY,gameMuted?'1':'0');
-    if(!gameMuted){try{const ctx=getCtx(),osc=ctx.createOscillator(),g=ctx.createGain();osc.connect(g);g.connect(ctx.destination);osc.type='sine';osc.frequency.value=520;const t=ctx.currentTime;const sv=0.18*(gameVolume/100);g.gain.setValueAtTime(sv,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.09);osc.start(t);osc.stop(t+0.09);}catch(e){}}
-}
-function toggleHaptic(){
-    gameHaptic=!gameHaptic;
-    document.getElementById('haptic-toggle').className='sett-toggle '+(gameHaptic?'on':'off');
-    localStorage.setItem(HAPTIC_KEY,gameHaptic?'1':'0');
-    if(gameHaptic&&navigator.vibrate)navigator.vibrate([20,10,20]);
-}
-
-// ============================================================
-// BACK NAVIGATION
-// ============================================================
-function backFromStartScreen(){
-    if(typeof window.onPrepComboExit==='function')window.onPrepComboExit();
-    else{document.getElementById('start-screen').style.display='none';document.getElementById('splash-screen').style.display='flex';}
-}
-function backFromOnboarding(){
-    document.getElementById('onboarding-screen').style.display='none';
-    const ss=document.getElementById('start-screen');ss.style.display='flex';ss.style.flexDirection='column';
-}
-function backFromTraining(){
-    document.getElementById('training-interface').style.display='none';
-    document.getElementById('onboarding-screen').style.display='flex';
-}
-function backFromTrainingComplete(){
-    document.getElementById('training-complete').style.display='none';
-    const ss=document.getElementById('start-screen');ss.style.display='flex';ss.style.flexDirection='column';
-}
-function backFromResult(){
-    document.getElementById('result-screen').style.display='none';
-    const ss=document.getElementById('start-screen');ss.style.display='flex';ss.style.flexDirection='column';
-}
-
-// ============================================================
-// QUIT MODAL
-// ============================================================
-function openQuitModal(){
-    pauseTimer();
-    document.getElementById('quit-modal').style.display='flex';
-}
-function closeQuitModal(){
-    document.getElementById('quit-modal').style.display='none';
-    const splashOpen=document.getElementById('round-splash').style.display==='flex';
-    const houseOpen=document.getElementById('house-modal').style.display==='flex';
-    const toastOpen=(document.getElementById('wrong-toast')||{style:{display:'none'}}).style.display!=='none';
-    if(!splashOpen&&!houseOpen&&!toastOpen)resumeTimer();
-}
-function quitGame(){
-    document.getElementById('quit-modal').style.display='none';
-    stopTimer();
-    document.getElementById('game-interface').style.display='none';
-    document.getElementById('round-splash').style.display='none';
-    document.getElementById('house-modal').style.display='none';
-    const wt=document.getElementById('wrong-toast');if(wt)wt.style.display='none';
-    const sc=document.getElementById('wt-scrim');if(sc)sc.style.display='none';
-    const lm=document.getElementById('logbook-modal');if(lm)lm.style.display='none';
-    selectedCards=[];gameLog=[];
-    const ss=document.getElementById('start-screen');ss.style.display='flex';ss.style.flexDirection='column';
-}
-
 // DARK MODE
 function toggleDark(){
     const isDark=document.body.classList.toggle('dark');
-    const t=document.getElementById('dark-mode-toggle');
-    if(t)t.className='sett-toggle '+(isDark?'on':'off');
+    document.getElementById('dark-toggle').innerText=isDark?'☀️':'🌙';
     localStorage.setItem('prepcombo_dark',isDark?'1':'0');
 }
 // Init dark from stored pref
 (function(){
     if(localStorage.getItem('prepcombo_dark')==='1'){
         document.body.classList.add('dark');
-        const t=document.getElementById('dark-mode-toggle');if(t)t.className='sett-toggle on';
+        const btn=document.getElementById('dark-toggle');if(btn)btn.innerText='☀️';
     }
 })();
 
 document.getElementById('play-btn').addEventListener('click',goToStartScreen);
 document.getElementById('play-btn').addEventListener('touchend',function(e){e.preventDefault();goToStartScreen();},{once:true});
-
-// ============================================================
-// LOGBOOK BADGE
-// ============================================================
-function updateLogbookBadge(){
-    const badge=document.getElementById('logbook-badge');
-    if(!badge)return;
-    const count=gameLog.length;
-    if(count>0){badge.innerText=count;badge.style.display='flex';}
-    else{badge.style.display='none';}
-}
-
-// ============================================================
-// WRONG-ANSWER TOAST
-// ============================================================
-function showWrongToast(bucketId,cards,nearMissNote,round,turn){
-    const sub=subjectById[bucketId]||{name:bucketId};
-    document.getElementById('wt-subject').innerText='Submitted to '+sub.name;
-    document.getElementById('wt-turn-label').innerText='R'+(round+1)+' · Turn '+turn;
-    // Build card pills
-    const pillsEl=document.getElementById('wt-card-pills');
-    const wtDk=document.body.classList.contains('dark');
-    pillsEl.innerHTML=cards.map(c=>{
-        const isOdd=!c.data.buckets.includes(bucketId);
-        const subjColor=(subjectById[c.data.buckets[0]]||{color:'#64748b'}).color;
-        const pillBg=isOdd?(wtDk?'rgba(239,68,68,0.18)':'#fee2e2'):(wtDk?'rgba(255,255,255,0.07)':'#f5f0e8');
-        const pillFg=isOdd?(wtDk?'#fca5a5':'#991b1b'):(wtDk?'var(--text-primary)':'#374151');
-        return `<span style="display:inline-flex;align-items:center;gap:4px;background:${pillBg};color:${pillFg};border-radius:4px;padding:3px 8px;font-size:0.7rem;font-weight:600;"><span style="width:8px;height:8px;border-radius:50%;background:${isOdd?'#be123c':subjColor};flex-shrink:0;"></span>${c.data.name}<span style="margin-left:2px;">${isOdd?'&#10007;':'&#10003;'}</span></span>`;
-    }).join('');
-    // Teaching note
-    const correctCount=cards.filter(c=>c.data.buckets.includes(bucketId)).length;
-    const noteTitle=document.getElementById('wt-note-title');
-    const noteBody=document.getElementById('wt-note-body');
-    if(correctCount===2){
-        noteTitle.innerText='Almost - one card was the odd one out';
-        noteBody.innerText=nearMissNote;
-    }else if(correctCount===1){
-        noteTitle.innerText='Only 1 of 3 belonged here';
-        noteBody.innerText=nearMissNote;
-    }else{
-        noteTitle.innerText='None of those belong to '+sub.name;
-        noteBody.innerText='These three don\'t share a clinical thread.';
-    }
-    pauseTimer();
-    document.getElementById('wt-scrim').style.display='block';
-    document.getElementById('wrong-toast').style.display='block';
-}
-
-function closeWrongToast(){
-    const scrim=document.getElementById('wt-scrim');
-    const toast=document.getElementById('wrong-toast');
-    if(!scrim||!toast)return;
-    if(toast.style.display==='none'&&scrim.style.display==='none')return;
-    scrim.style.display='none';
-    toast.style.display='none';
-    const inGame=document.getElementById('game-interface').style.display!=='none';
-    const splashOpen=document.getElementById('round-splash').style.display==='flex';
-    if(inGame&&!splashOpen)resumeTimer();
-}
-
-// ============================================================
-// LOGBOOK MODAL
-// ============================================================
-function openLogbook(){
-    const modal=document.getElementById('logbook-modal');
-    if(!modal)return;
-    document.getElementById('lb-subtitle').innerText='Round '+(currentRound+1)+' · Turn '+currentTurn+'/3';
-    filterLogbook('all',document.querySelector('[data-round="all"]'));
-    modal.style.display='flex';
-}
-
-function closeLogbook(){
-    const modal=document.getElementById('logbook-modal');
-    if(modal)modal.style.display='none';
-}
-
-function filterLogbook(roundFilter,btn){
-    document.querySelectorAll('.lb-filter').forEach(b=>{
-        b.style.background=b===btn?'var(--accent)':'var(--surface)';
-        b.style.color=b===btn?'white':'var(--text-secondary)';
-    });
-    renderLogbookEntries(roundFilter);
-}
-
-function renderLogbookEntries(roundFilter){
-    const container=document.getElementById('lb-entries');
-    if(!container)return;
-    const filtered=roundFilter==='all'?gameLog:gameLog.filter(p=>p.round===roundFilter);
-    if(filtered.length===0){
-        container.innerHTML='<div style="text-align:center;color:var(--text-secondary);font-size:0.8rem;padding:40px 20px;">No plays yet.</div>';
-        return;
-    }
-    const rounds=[...new Set(filtered.map(p=>p.round))].sort();
-    const dk=document.body.classList.contains('dark');
-    let html='';
-    rounds.forEach(r=>{
-        const roundPlays=filtered.filter(p=>p.round===r);
-        html+=`<div style="font-size:0.6rem;font-weight:800;color:var(--text-secondary);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px;margin-top:${r>rounds[0]?'16px':'0'};">Round ${r+1}</div>`;
-        roundPlays.forEach((play,i)=>{
-            const sub=subjectById[play.bucket]||{name:play.bucket,color:'#64748b'};
-            const borderColor=play.hod?'#d97706':(play.correct?'#16a34a':'#be123c');
-            const bgColor=play.hod?(dk?'rgba(217,119,6,0.08)':'#fffbf0'):(play.correct?(dk?'rgba(22,163,74,0.07)':'#f8fdf9'):(dk?'rgba(239,68,68,0.06)':'#fff8f8'));
-            let badgeHtml='';
-            if(play.hod){
-                badgeHtml=`<span style="background:#fef3c7;color:#92400e;border-radius:6px;padding:2px 8px;font-size:0.65rem;font-weight:800;">HOD</span>`;
-            }else if(play.correct){
-                badgeHtml=`<span style="background:#dcfce7;color:#166534;border-radius:6px;padding:2px 8px;font-size:0.65rem;font-weight:800;">Correct</span>`;
-            }else{
-                const cc=play.correctCount||0;
-                badgeHtml=`<span style="background:#fee2e2;color:#991b1b;border-radius:6px;padding:2px 8px;font-size:0.65rem;font-weight:800;">${3-cc}/3 wrong</span>`;
-            }
-            let pillsHtml='';
-            if(play.cardDetails&&play.cardDetails.length){
-                pillsHtml=play.cardDetails.map(cd=>{
-                    const isOdd=!play.correct&&cd.isOddOne;
-                    const pillBg=isOdd?(dk?'rgba(239,68,68,0.18)':'#fee2e2'):(dk?'rgba(255,255,255,0.07)':'#f5f0e8');
-                    const pillFg=isOdd?(dk?'#fca5a5':'#991b1b'):(dk?'var(--text-primary)':'#374151');
-                    return `<span style="display:inline-flex;align-items:center;gap:3px;background:${pillBg};color:${pillFg};border-radius:4px;padding:2px 7px;font-size:0.65rem;font-weight:600;"><span style="width:7px;height:7px;border-radius:50%;background:${cd.subjectColor||'#64748b'};flex-shrink:0;"></span>${cd.name}${isOdd?' &#10007;':''}</span>`;
-                }).join('');
-            }else{
-                const fallPillBg=dk?'rgba(255,255,255,0.07)':'#f5f0e8';
-                const fallPillFg=dk?'var(--text-primary)':'#374151';
-                pillsHtml=play.cards.split(', ').map(n=>`<span style="display:inline-flex;align-items:center;gap:3px;background:${fallPillBg};color:${fallPillFg};border-radius:4px;padding:2px 7px;font-size:0.65rem;font-weight:600;">${n}</span>`).join('');
-            }
-            let noteHtml='';
-            if(!play.correct&&play.nearMissNote){
-                const noteBg=play.correctCount===2?(dk?'rgba(217,119,6,0.1)':'#fef3c7'):(dk?'rgba(190,18,60,0.1)':'#fff1f1');
-                const noteColor=play.correctCount===2?(dk?'#fbbf24':'#78350f'):(dk?'#fca5a5':'#7f1d1d');
-                noteHtml=`<div style="background:${noteBg};border-left:2px solid ${play.correctCount===2?'#d97706':'#be123c'};padding:8px 10px;border-radius:0 6px 6px 0;font-size:0.72rem;color:${noteColor};line-height:1.6;margin-top:8px;">${play.nearMissNote}</div>`;
-            }else if(play.hod&&play.activeTag){
-                const treasure=typeof treasures!=='undefined'&&treasures[play.activeTag]?treasures[play.activeTag]:'';
-                const hodNoteBg=dk?'rgba(217,119,6,0.1)':'#fef9e7';
-                const hodNoteColor=dk?'#fbbf24':'#78350f';
-                if(treasure)noteHtml=`<div style="background:${hodNoteBg};border-left:2px solid #d97706;padding:8px 10px;border-radius:0 6px 6px 0;font-size:0.72rem;color:${hodNoteColor};line-height:1.6;margin-top:8px;">${treasure}</div>`;
-            }
-            html+=`<div style="border-left:3px solid ${borderColor};padding:10px 12px;margin-bottom:8px;border-radius:0 8px 8px 0;background:${bgColor};">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
-                    <div><span style="font-size:0.7rem;color:var(--text-secondary);">Turn ${play.turn??i+1} · </span><span style="font-size:0.82rem;font-weight:700;color:var(--text-primary);">${sub.name}</span></div>
-                    <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:0.65rem;color:var(--text-secondary);">+${play.pts} pts</span>${badgeHtml}</div>
-                </div>
-                <div style="display:flex;gap:4px;flex-wrap:wrap;">${pillsHtml}</div>
-                ${noteHtml}
-            </div>`;
-        });
-    });
-    container.innerHTML=html;
-}
 </script>
-
-<!-- LOGBOOK MODAL -->
-<div id="logbook-modal"
-    style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--surface2);z-index:8000;flex-direction:column;max-width:520px;margin:0 auto;">
-    <div style="padding:16px 16px 12px;border-bottom:1px solid var(--card-border);background:var(--surface2);flex-shrink:0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div>
-                <div style="font-size:1.1rem;font-weight:900;color:var(--text-primary);">Your Plays</div>
-                <div id="lb-subtitle" style="font-size:0.65rem;color:var(--text-secondary);margin-top:2px;"></div>
-            </div>
-            <button onclick="closeLogbook()" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--card-border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--text-secondary);">&#10005;</button>
-        </div>
-        <div style="display:flex;gap:6px;" id="lb-filter-row">
-            <button class="lb-filter" data-round="all" onclick="filterLogbook('all',this)"
-                style="border-radius:20px;padding:4px 12px;font-size:0.7rem;font-weight:700;border:none;cursor:pointer;background:var(--accent);color:white;">All</button>
-            <button class="lb-filter" data-round="0" onclick="filterLogbook(0,this)"
-                style="border-radius:20px;padding:4px 12px;font-size:0.7rem;font-weight:700;border:none;cursor:pointer;background:var(--surface);color:var(--text-secondary);">R1</button>
-            <button class="lb-filter" data-round="1" onclick="filterLogbook(1,this)"
-                style="border-radius:20px;padding:4px 12px;font-size:0.7rem;font-weight:700;border:none;cursor:pointer;background:var(--surface);color:var(--text-secondary);">R2</button>
-            <button class="lb-filter" data-round="2" onclick="filterLogbook(2,this)"
-                style="border-radius:20px;padding:4px 12px;font-size:0.7rem;font-weight:700;border:none;cursor:pointer;background:var(--surface);color:var(--text-secondary);">R3</button>
-        </div>
-    </div>
-    <div id="lb-entries" style="flex:1;overflow-y:auto;padding:12px 14px 20px;"></div>
-</div>
-
-<!-- WRONG TOAST SCRIM -->
-<div id="wt-scrim" onclick="closeWrongToast()"
-    style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.52);z-index:7000;"></div>
-
-<!-- WRONG TOAST -->
-<div id="wrong-toast"
-    style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface2);border-radius:14px 14px 0 0;z-index:7001;overflow:hidden;max-width:520px;margin:0 auto;">
-    <div id="wt-header" style="background:#991b1b;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:1rem;color:rgba(255,255,255,0.7);">&#10007;</span>
-            <span id="wt-subject" style="font-size:0.85rem;font-weight:700;color:white;">Submitted to Dermatology</span>
-        </div>
-        <span id="wt-turn-label" style="font-size:0.65rem;color:rgba(255,255,255,0.5);">R1 · Turn 1</span>
-    </div>
-    <div style="padding:12px 16px 10px;border-bottom:1px solid var(--card-border);">
-        <div style="font-size:0.6rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Cards submitted</div>
-        <div id="wt-card-pills" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-    </div>
-    <div style="padding:12px 16px;">
-        <div id="wt-note" style="background:#fef3c7;border-left:3px solid #d97706;padding:10px 12px;border-radius:0 8px 8px 0;">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-                <span style="font-size:0.9rem;">&#9888;</span>
-                <span id="wt-note-title" style="font-size:0.78rem;font-weight:700;color:#92400e;"></span>
-            </div>
-            <div id="wt-note-body" style="font-size:0.75rem;color:#78350f;line-height:1.65;"></div>
-        </div>
-    </div>
-    <div style="padding:8px 16px 14px;background:var(--surface);border-top:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:0.7rem;color:var(--text-secondary);">&#9646; Timer paused</span>
-        <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:700;">Tap anywhere to continue</span>
-    </div>
-</div>
-
 </body>
 </html>
