@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PrepCombo</title>
+    <title>Acumen</title>
     <style>
         :root { --bg:#eef2f7; --surface:#e2e8f0; --surface2:#ffffff; --card-border:#cbd5e1; --accent:#3b82f6; --gold:#d97706; --text-primary:#1e293b; --text-secondary:#64748b; --card-face:#f5f0e8; --card-hint:#374151; --card-divider:#ddd8cc; }
         body.dark { --bg:#0c1424; --surface:#192036; --surface2:#1d2840; --card-border:#2a3a56; --text-primary:#e2eaf8; --text-secondary:#7a95b8; --card-face:#1a2e4a; --card-hint:#b8cce0; --card-divider:#2a3a56; }
@@ -206,19 +206,52 @@
         .sett-toggle::after { content:''; position:absolute; top:4px; width:20px; height:20px; background:#fff; border-radius:50%; transition:left 0.22s; box-shadow:0 1px 4px rgba(0,0,0,0.28); }
         .sett-toggle.off::after { left:4px; }
         .sett-toggle.on::after { left:26px; }
+
+        /* RESULT SCREEN ENTRANCE ANIMATION */
+        #result-screen:not(.visible) { transform:translateY(40px); opacity:0; }
+        #result-screen.visible { transform:translateY(0); opacity:1; transition:transform 0.4s cubic-bezier(0.34,1.2,0.64,1),opacity 0.3s ease; }
+        #final-rank-box { opacity:0; transform:translateY(12px); transition:all 0.35s ease 0.15s; }
+        #final-rank-box.visible { opacity:1; transform:translateY(0); }
+        #hs-display { opacity:0; transition:opacity 0.3s ease 0.35s; }
+        #hs-display.visible { opacity:1; }
+        #subject-breakdown { opacity:0; transform:translateY(8px); transition:all 0.3s ease 0.5s; }
+        #subject-breakdown.visible { opacity:1; transform:translateY(0); }
+        #lifetime-stats { opacity:0; transition:opacity 0.3s ease 0.65s; }
+        #lifetime-stats.visible { opacity:1; }
+        #round-summary { opacity:0; transition:opacity 0.3s ease 0.7s; }
+        #round-summary.visible { opacity:1; }
+
+        /* CARD SELECTION LIFT */
+        .card.selected { transform:scale(1.06) translateY(-2px); z-index:10; transition:transform 0.12s cubic-bezier(0.34,1.56,0.64,1); }
+        .card:not(.selected) { transform:scale(1) translateY(0); transition:transform 0.1s ease; }
+
+        /* TIMER PULSE */
+        @keyframes timePulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
+        @keyframes timeTick { 0%{transform:scale(1)} 40%{transform:scale(1.18)} 100%{transform:scale(1)} }
+        #timer-val.t-warn { color:#eab308; animation:timePulse 1s ease infinite; }
+        #timer-val.t-danger { color:#ef4444; font-size:1.15rem; animation:timePulse 0.45s ease infinite; }
+        #timer-bar-wrap.t-danger-bg { background:rgba(239,68,68,0.12); border-radius:4px; }
+
+        /* BUCKET RIPPLE */
+        @keyframes bucketRipple { 0%{transform:scale(1);opacity:0.7} 100%{transform:scale(1.8);opacity:0} }
+        .bucket-ripple { position:absolute;top:0;left:0;right:0;bottom:0;border-radius:10px;border:2px solid rgba(255,255,255,0.6);animation:bucketRipple 0.5s ease forwards;pointer-events:none; }
     </style>
 </head>
 <body>
 <div id="splash-screen">
-    <h1><span class="p1">Prep</span><span class="p2">Combo</span></h1>
-    <p class="splash-sub">"Making it stick should be fun"</p>
+    <div id="acumen-logo" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:2rem;font-weight:700;letter-spacing:0.16em;color:#f1f5f9;font-family:inherit;">ACUMEN</div>
+        <svg width="160" height="18" viewBox="0 0 160 18" style="display:block;">
+            <polyline points="0,9 58,9 70,2 78,16 86,9 160,9" stroke="#d97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
     <button id="play-btn" style="margin-top:44px;padding:16px 52px;font-size:1.1rem;font-weight:900;background:var(--gold);color:#fff;border:none;border-radius:14px;cursor:pointer;letter-spacing:0.04em;box-shadow:0 4px 24px rgba(217,119,6,0.5);">PLAY</button>
 </div>
 
 <div id="onboarding-screen">
     <button class="back-btn" style="position:absolute;top:14px;left:14px;" onclick="backFromOnboarding()">←</button>
     <h1>How to Play</h1>
-    <p class="sub">PrepCombo: clinical combos against the clock</p>
+    <p class="sub">Acumen: clinical combos against the clock</p>
     <div class="ob-steps">
         <div class="ob-step"><span class="ob-num">1</span><p><strong>Long press a card</strong> to flip it and read its clinical hint.</p></div>
         <div class="ob-step"><span class="ob-num">2</span><p><strong>Tap a card</strong> to select it. Gold border appears. Tap again to deselect.</p></div>
@@ -267,8 +300,7 @@
 </div>
 
 <div id="start-screen">
-    <h1>PrepCombo</h1>
-    <p class="tagline">"Making it stick should be fun"</p>
+    <h1>Acumen</h1>
     <div style="background:var(--surface2);border-radius:14px;border:1px solid var(--card-border);padding:20px 22px;max-width:340px;width:100%;margin-bottom:24px;text-align:center;">
         <p style="font-size:1.05rem;font-weight:800;color:var(--text-primary);line-height:1.4;margin-bottom:10px;">This is what fast clinical thinking feels like.</p>
         <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.6;margin-bottom:10px;">Every great clinician sees patterns others miss. This is where you find out if you're one of them.</p>
@@ -276,7 +308,7 @@
     </div>
     <button class="back-btn" style="position:absolute;top:14px;left:14px;" onclick="backFromStartScreen()">←</button>
     <div class="start-btns">
-        <button class="start-btn" onclick="startGame()">Start Rotation</button>
+        <button class="start-btn" onclick="startWithLoading()">Start Rotation</button>
         <button class="start-btn" style="background:var(--surface2);color:var(--accent);border:2px solid var(--accent);box-shadow:none;" onclick="startDailyChallenge()">Daily Challenge 📅</button>
         <div id="daily-msg" style="display:none;font-size:0.75rem;color:var(--text-secondary);text-align:center;padding:8px 14px;background:var(--surface2);border-radius:10px;border:1px solid var(--card-border);width:100%;"></div>
         <button class="start-btn" style="background:var(--surface2);color:var(--gold);border:2px solid var(--gold);box-shadow:none;" onclick="goToTraining()">How to Play</button>
@@ -300,6 +332,11 @@
     </div>
     <div id="main">
         <div class="stats-bar">
+            <button id="back-btn" onclick="openQuitModal()" aria-label="Back" style="display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--text-secondary);font-size:0.78rem;font-weight:700;padding:4px 6px;flex-shrink:0;border-radius:7px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></svg>
+                Back
+            </button>
+            <div style="width:0.5px;height:18px;background:var(--card-border);flex-shrink:0;"></div>
             <div style="position:relative;flex-shrink:0;">
                 <button id="logbook-btn" onclick="openLogbook()" aria-label="Open logbook"
                     style="width:30px;height:30px;border-radius:7px;background:var(--surface);border:1px solid var(--card-border);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;color:var(--text-secondary);">
@@ -311,7 +348,7 @@
             <div class="stat-item">Round<span class="stat-val" id="round-num">1/3</span></div>
             <div class="stat-item">Turn<span class="stat-val" id="turn-num">1/3</span></div>
             <div class="stat-item">Score<span class="stat-val" id="score-val">0</span></div>
-            <div class="stat-item">Time<span class="stat-val" id="timer-val" style="color:#4f9e72;">120</span></div>
+            <div class="stat-item">Time<span class="stat-val" id="timer-val">120</span></div>
             <span id="streak-val" style="display:none;">0🔥</span>
         </div>
         <div id="message">Tap to select. Long press for a hint.</div>
@@ -349,6 +386,8 @@
         </div>
     </div>
     <div id="hs-display"></div>
+    <div id="subject-breakdown" style="width:90%;max-width:370px;background:var(--surface2);border-radius:12px;padding:12px 14px;border:1px solid var(--card-border);"></div>
+    <div id="lifetime-stats" style="width:90%;max-width:370px;background:var(--surface2);border-radius:12px;padding:12px 14px;border:1px solid var(--card-border);display:flex;justify-content:space-between;align-items:center;"></div>
     <div id="round-summary"></div>
     <button onclick="shareScore()" style="padding:13px 36px;background:#25d366;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:0.95rem;color:#fff;width:90%;max-width:370px;">Share with Friends 📤</button>
     <button onclick="location.reload()" style="padding:13px 36px;background:var(--gold);border:none;border-radius:12px;font-weight:900;cursor:pointer;font-size:0.95rem;color:#fff;width:90%;max-width:370px;">Play Again</button>
@@ -409,7 +448,7 @@
 <script>
 // ============================================================
 // DEVELOPER HANDOFF HOOK
-// window.onPrepComboEnd = (result) => {
+// window.onAcumenEnd = (result) => {
 //   fetch('/api/scores', { method:'POST', body:JSON.stringify(result) });
 // };
 // ============================================================
@@ -669,7 +708,7 @@ const treasures={
 // Picks 6 tags per round, no repeats from previous round,
 // ensures subject spread across the round
 // ============================================================
-const ROUNDS=3,COMBOS_PER_ROUND=6;
+const ROUNDS=3,COMBOS_PER_ROUND=6,TURNS_PER_ROUND=3;
 let usedTagsLastRound=[];
 
 function pickRoundTags(rng=Math.random){
@@ -791,13 +830,27 @@ function resumeTimer(){
 }
 function updateTimerUI(){
     const pct=timerSecondsLeft/ROUND_TIME;
-    const tv=document.getElementById('timer-val'),bar=document.getElementById('timer-bar'),pill=document.getElementById('bonus-pill');
+    const tv=document.getElementById('timer-val'),bar=document.getElementById('timer-bar'),pill=document.getElementById('bonus-pill'),wrap=document.getElementById('timer-bar-wrap');
     if(!tv)return;
     tv.innerText=timerSecondsLeft;bar.style.width=(pct*100)+'%';
     pill.innerText='+'+getSpeedBonus()+' speed';
-    if(pct>0.5){tv.style.color='#4f9e72';bar.className='';pill.className='';}
-    else if(pct>0.25){tv.style.color='#d97706';bar.className='warn';pill.className='warn';if(timerSecondsLeft===30)haptic([20,10,20]);}
-    else{tv.style.color='#ef4444';bar.className='danger';pill.className='danger';if(timerSecondsLeft<=15)haptic(15);}
+    if(timerSecondsLeft<=10){
+        tv.className='stat-val t-danger';
+        wrap.classList.add('t-danger-bg');
+        tv.style.animation='none';
+        requestAnimationFrame(()=>{tv.style.animation='timeTick 0.2s ease,timePulse 0.45s ease infinite';});
+        bar.className='danger';pill.className='danger';
+    }else if(timerSecondsLeft<=20){
+        tv.className='stat-val t-warn';
+        wrap.classList.remove('t-danger-bg');
+        bar.className='warn';pill.className='warn';
+        if(timerSecondsLeft===20)haptic([20,10,20]);
+    }else{
+        tv.className='stat-val';
+        wrap.classList.remove('t-danger-bg');
+        bar.className='';pill.className='';
+        if(timerSecondsLeft===30)haptic([20,10,20]);
+    }
 }
 function getSpeedBonus(){return Math.round((timerSecondsLeft/ROUND_TIME)*100);}
 function timerExpired(){
@@ -808,8 +861,8 @@ function timerExpired(){
     updateBucketState();
     const completedRound=currentRound;
     currentTurn=1;currentRound++;
-    if(typeof window.onPrepComboRound==='function'){
-        window.onPrepComboRound({
+    if(typeof window.onAcumenRound==='function'){
+        window.onAcumenRound({
             round:completedRound,
             plays:gameLog.filter(p=>p.round===completedRound),
             roundScore:gameLog.filter(p=>p.round===completedRound).reduce((a,p)=>a+p.pts,0)
@@ -843,16 +896,50 @@ function beginRealGame(){
 }
 
 // GAME START
-function startGame(){
-    try{getCtx();}catch(e){}
-    playTone(440,'sine',0.2,0.2);haptic([20,10,20]);
-    isDailyMode=false;
-    currentRound=0;currentTurn=1;score=0;streak=0;hodStreak=0;skipsRemaining=1;flipLocked=false;selectedCards=[];gameLog=[];
-    generateRounds();
+function resetVisibleClasses(){
+    ['result-screen','final-rank-box','hs-display','subject-breakdown','lifetime-stats','round-summary'].forEach(id=>{
+        const el=document.getElementById(id);if(el)el.classList.remove('visible');
+    });
+}
+
+function startWithLoading(){
+    const screen=document.getElementById('loading-screen');
+    const bar=document.getElementById('loading-bar');
+    const status=document.getElementById('loading-status');
+    resetVisibleClasses();
     document.getElementById('start-screen').style.display='none';
-    document.getElementById('game-interface').style.display='flex';
-    updateLogbookBadge();
-    loadRound();
+    screen.style.display='flex';
+    bar.style.width='0%';
+    bar.style.background='#d97706';
+    status.style.color='#334155';
+    status.innerText='Preparing your rounds...';
+    requestAnimationFrame(()=>{
+        bar.style.width='30%';
+        setTimeout(()=>{
+            try{getCtx();}catch(e){}
+            playTone(440,'sine',0.2,0.2);haptic([20,10,20]);
+            isDailyMode=false;
+            currentRound=0;currentTurn=1;score=0;streak=0;hodStreak=0;skipsRemaining=1;flipLocked=false;selectedCards=[];gameLog=[];
+            generateRounds();
+            bar.style.width='80%';
+            setTimeout(()=>{
+                bar.style.width='100%';
+                bar.style.background='#16a34a';
+                status.style.color='#16a34a';
+                status.innerHTML='&#10003; Ready';
+                setTimeout(()=>{
+                    screen.style.display='none';
+                    document.getElementById('game-interface').style.display='flex';
+                    updateLogbookBadge();
+                    loadRound();
+                },500);
+            },600);
+        },400);
+    });
+}
+
+function startGame(){
+    startWithLoading();
 }
 
 function startDailyChallenge(){
@@ -881,9 +968,18 @@ function buildBuckets(bucketsForRound){
     const bc=document.getElementById('buckets');bc.innerHTML='';
     bucketsForRound.forEach(s=>{
         const d=document.createElement('div');d.className='bucket';d.style.background=s.color;
+        d.style.position='relative';d.style.overflow='visible';
         d.innerHTML='<span class="b-emoji">'+s.emoji+'</span><span class="b-name">'+s.name+'</span>';
         d.onclick=()=>dropInBucket(s.id,d);bc.appendChild(d);
     });
+}
+
+function triggerBucketAnim(bucketEl){
+    bucketEl.style.transition='transform 0.15s cubic-bezier(0.34,1.56,0.64,1)';
+    bucketEl.style.transform='scale(1.13)';
+    setTimeout(()=>{bucketEl.style.transform='scale(1)';},150);
+    const ring=document.createElement('div');ring.className='bucket-ripple';
+    bucketEl.appendChild(ring);setTimeout(()=>ring.remove(),500);
 }
 
 function updateBucketState(){
@@ -950,6 +1046,8 @@ function loadRound(){
     document.getElementById('message').innerText=flipLocked
         ?'Final Exam Mode. No hints until the last turn.'
         :'Tap to select. Long press for a hint.';
+    document.getElementById('timer-val').className='stat-val';
+    document.getElementById('timer-bar-wrap').classList.remove('t-danger-bg');
     startTimer();
 }
 
@@ -978,7 +1076,7 @@ function updateComboHints(){
 }
 
 const wrongMessages=['OMG my doc uses AI 💀','Wrong ward, wrong answer','That\'s a brave guess','Even WebMD disagrees','House would be disappointed','That\'s not what they taught in med school','The stethoscope is crying','Needs more caffeine ☕','Wrong. But bold. Respect.','Sir this is a hospital, not a guess','The ECG is flatlined','Bro studied the wrong chapter'];
-const correctMessages=['Wow, you must have studied using PrepLadder 🔥','PrepLadder student spotted 👀','Clean. Clinical. PrepLadder energy.','That\'s the PrepLadder difference right there','Sharp thinking! 🧠','Textbook placement 📖','Clinical instinct on point','That\'s how you do it','Solid combo. Keep going.','Nice one. Stay focused.','You clearly paid attention in class 😏','PrepLadder would be proud'];
+const correctMessages=['Sharp thinking! 🧠','Textbook placement 📖','Clinical instinct on point','That\'s how you do it','Solid combo. Keep going.','Nice one. Stay focused.','You clearly paid attention in class 😏','Pattern recognition on point.','Clean and clinical.','That\'s the difference right there.','You\'re thinking like a clinician.','Not everyone sees that. You did.'];
 
 function dropInBucket(bucketId,bucketEl){
     if(selectedCards.length!==3){sndError();haptic(H_ERROR);document.getElementById('message').innerText='Select exactly 3 cards first.';return;}
@@ -1029,7 +1127,7 @@ function dropInBucket(bucketId,bucketEl){
     score+=pts;document.getElementById('score-val').innerText=score;
     streak=(mult>=10)?streak+1:0;document.getElementById('streak-val').innerText=streak+'🔥';
     if(streak>=3)showStreakBanner(streak);
-    if(bucketEl){bucketEl.classList.add('pulse-green');setTimeout(()=>bucketEl.classList.remove('pulse-green'),600);}
+    if(bucketEl){triggerBucketAnim(bucketEl);bucketEl.classList.add('pulse-green');setTimeout(()=>bucketEl.classList.remove('pulse-green'),600);}
     showScorePop('+'+pts,bucketEl,false);
     gameLog.push({round:currentRound,turn:currentTurn,bucket:bucketId,cards:selectedCards.map(c=>c.data.name).join(', '),pts,mult,speedBonus,correct:true,hod:mult===20,correctCount,nearMissNote:null,activeTag,cardDetails:selectedCards.map(c=>({name:c.data.name,subjectColor:(subjectById[c.data.buckets[0]]||{color:'#64748b'}).color,isOddOne:false}))});
     const entry=document.createElement('div');entry.className='history-item'+(mult===20?' hi-hod':'');
@@ -1066,15 +1164,25 @@ function advanceTurn(){
     if(currentTurn>3){
         const completedRound=currentRound;
         currentTurn=1;currentRound++;stopTimer();
-        if(typeof window.onPrepComboRound==='function'){
-            window.onPrepComboRound({
+        if(typeof window.onAcumenRound==='function'){
+            window.onAcumenRound({
                 round:completedRound,
                 plays:gameLog.filter(p=>p.round===completedRound),
                 roundScore:gameLog.filter(p=>p.round===completedRound).reduce((a,p)=>a+p.pts,0)
             });
         }
-        if(currentRound>=ROUNDS)setTimeout(endGame,700);
-        else showRoundSplash(currentRound+1);
+        if(currentRound>=ROUNDS){
+            setTimeout(endGame,700);
+        }else{
+            let splashSub='New cards. Stay sharp.';
+            if(isPerfectRound(completedRound)){
+                const bonus=Math.round(getRoundSubtotal(completedRound)*0.3);
+                score+=bonus;
+                document.getElementById('score-val').innerText=score;
+                splashSub='Perfect Round! <span style="color:#d97706;font-weight:900;">+'+bonus+' pts</span>';
+            }
+            showRoundSplash(currentRound+1,splashSub);
+        }
     }else{
         document.getElementById('turn-num').innerText=currentTurn+'/3';
         if(currentTurn===3){
@@ -1104,7 +1212,15 @@ function showStreakBanner(n){
     const b=document.getElementById('streak-banner');b.innerText=n+'x Streak. On fire!';b.style.display='block';
     setTimeout(()=>{b.style.display='none';},1900);
 }
-function showRoundSplash(n){
+function getRoundSubtotal(round){
+    return gameLog.filter(p=>p.round===round).reduce((a,p)=>a+p.pts,0);
+}
+function isPerfectRound(round){
+    const plays=gameLog.filter(p=>p.round===round&&!p.skipped);
+    return plays.length===TURNS_PER_ROUND&&plays.every(p=>p.correct);
+}
+
+function showRoundSplash(n,subText='New cards. Stay sharp.'){
     closeWrongToast();
     sndRound();haptic([40,20,60]);stopTimer();
     // Update round progress dots
@@ -1115,7 +1231,7 @@ function showRoundSplash(n){
         else dot.className='round-dot';
     }
     document.getElementById('splash-title').innerText='Round '+n;
-    document.getElementById('splash-sub').innerText='New cards. Stay sharp.';
+    document.getElementById('splash-sub').innerHTML=subText;
     document.getElementById('round-splash').style.display='flex';
     setTimeout(()=>{document.getElementById('round-splash').style.display='none';loadRound();},1800);
 }
@@ -1185,6 +1301,17 @@ function endGame(){
     stopTimer();
     document.getElementById('game-interface').style.display='none';
     document.getElementById('result-screen').style.display='flex';
+    // Trigger entrance animation
+    requestAnimationFrame(()=>{
+        requestAnimationFrame(()=>{
+            document.getElementById('result-screen').classList.add('visible');
+            setTimeout(()=>document.getElementById('final-rank-box').classList.add('visible'),150);
+            setTimeout(()=>document.getElementById('hs-display').classList.add('visible'),350);
+            setTimeout(()=>document.getElementById('subject-breakdown').classList.add('visible'),500);
+            setTimeout(()=>document.getElementById('lifetime-stats').classList.add('visible'),650);
+            setTimeout(()=>document.getElementById('round-summary').classList.add('visible'),700);
+        });
+    });
 
     const prevHS=getHS();
     const isNew=score>0&&score>prevHS;
@@ -1245,20 +1372,70 @@ function endGame(){
         document.querySelector('#result-screen h1').innerText='Rotation Complete';
     }
     buildSummary();
+    buildSubjectBreakdown();
+    buildLifetimeStats();
     const result={score,rank:t,plays:gameLog,timestamp:new Date().toISOString(),daily:isDailyMode||undefined};
-    if(typeof window.onPrepComboEnd==='function')window.onPrepComboEnd(result);
+    if(typeof window.onAcumenEnd==='function')window.onAcumenEnd(result);
+}
+
+function buildSubjectBreakdown(){
+    const container=document.getElementById('subject-breakdown');
+    if(!container||!gameLog.length)return;
+    const map={};
+    gameLog.forEach(play=>{
+        if(!play.bucket||play.skipped)return;
+        const sub=subjectById[play.bucket]||{name:play.bucket};
+        if(!map[play.bucket])map[play.bucket]={name:sub.name,total:0,correct:0};
+        map[play.bucket].total++;
+        if(play.correct)map[play.bucket].correct++;
+    });
+    const rows=Object.values(map).map(s=>{
+        const dots=Array.from({length:s.total},(_,i)=>{
+            const ok=i<s.correct;
+            return '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:2px;background:'+(ok?'#16a34a':'transparent')+';border:'+(ok?'none':'1.5px solid #94a3b8')+';"></span>';
+        }).join('');
+        const col=s.correct===s.total?'#16a34a':s.correct===0?'#ef4444':'var(--text-secondary)';
+        return '<div style="display:flex;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--card-border);">'+
+            '<span style="font-size:0.72rem;color:var(--text-primary);min-width:90px;font-weight:700;">'+s.name+'</span>'+
+            '<div style="flex:1;display:flex;align-items:center;gap:0;">'+dots+'</div>'+
+            '<span style="font-size:0.72rem;font-weight:800;color:'+col+';min-width:28px;text-align:right;">'+s.correct+'/'+s.total+'</span>'+
+            '</div>';
+    }).join('');
+    container.innerHTML='<div style="font-size:0.6rem;font-weight:800;color:var(--text-secondary);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px;">Subject performance</div>'+rows;
+}
+
+function updateLifetimeStats(){
+    const games=parseInt(localStorage.getItem('acumen_games')||'0')+1;
+    const prevC=parseInt(localStorage.getItem('acumen_correct')||'0');
+    const prevT=parseInt(localStorage.getItem('acumen_total')||'0');
+    const prevH=parseInt(localStorage.getItem('acumen_hods')||'0');
+    const newC=gameLog.filter(p=>p.correct).length;
+    const newH=gameLog.filter(p=>p.hod&&p.correct).length;
+    localStorage.setItem('acumen_games',games);
+    localStorage.setItem('acumen_correct',prevC+newC);
+    localStorage.setItem('acumen_total',prevT+gameLog.length);
+    localStorage.setItem('acumen_hods',prevH+newH);
+    return{games,accuracy:Math.round((prevC+newC)/(prevT+gameLog.length)*100)||0,hods:prevH+newH};
+}
+
+function buildLifetimeStats(){
+    const el=document.getElementById('lifetime-stats');if(!el)return;
+    const s=updateLifetimeStats();
+    const stat=(label,val,col)=>'<div style="text-align:center;"><div style="font-size:0.62rem;color:var(--text-secondary);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;">'+label+'</div><div style="font-size:1.1rem;font-weight:900;color:'+(col||'var(--text-primary)')+';">'+val+'</div></div>';
+    const div='<div style="width:0.5px;height:28px;background:var(--card-border);"></div>';
+    el.innerHTML=stat('Games',s.games)+div+stat('Accuracy',s.accuracy+'%')+div+stat('HODs',s.hods,'var(--gold)');
 }
 
 function shareScore(){
     const sc=document.getElementById('final-score-val').innerText;
     let text;
     if(isDailyMode){
-        text='PrepCombo Daily - '+dailyDate+' - '+sc+' pts\nCan you beat me? '+SHARE_URL;
+        text='Acumen Daily - '+dailyDate+' - '+sc+' pts\nCan you beat me? '+SHARE_URL;
     }else{
         const rank=document.getElementById('rank-title').innerText;
-        text='I scored '+sc+' pts on PrepCombo and ranked "'+rank+'" 🏆\n\nCan you beat me? Powered by PrepLadder.\n'+SHARE_URL;
+        text='I scored '+sc+' pts on Acumen and ranked "'+rank+'" 🏆\n\nCan you beat me?\n'+SHARE_URL;
     }
-    if(navigator.share){navigator.share({title:'PrepCombo',text}).catch(()=>{});}
+    if(navigator.share){navigator.share({title:'Acumen',text}).catch(()=>{});}
     else{navigator.clipboard.writeText(text).then(()=>{const btn=document.querySelector('button[onclick="shareScore()"]');const orig=btn.innerText;btn.innerText='Copied to clipboard';setTimeout(()=>{btn.innerText=orig;},2000);}).catch(()=>{alert(text);});}
 }
 
@@ -1447,7 +1624,7 @@ function toggleHaptic(){
 // BACK NAVIGATION
 // ============================================================
 function backFromStartScreen(){
-    if(typeof window.onPrepComboExit==='function')window.onPrepComboExit();
+    if(typeof window.onAcumenExit==='function')window.onAcumenExit();
     else{document.getElementById('start-screen').style.display='none';document.getElementById('splash-screen').style.display='flex';}
 }
 function backFromOnboarding(){
@@ -1463,6 +1640,7 @@ function backFromTrainingComplete(){
     const ss=document.getElementById('start-screen');ss.style.display='flex';ss.style.flexDirection='column';
 }
 function backFromResult(){
+    resetVisibleClasses();
     document.getElementById('result-screen').style.display='none';
     const ss=document.getElementById('start-screen');ss.style.display='flex';ss.style.flexDirection='column';
 }
@@ -1482,6 +1660,7 @@ function closeQuitModal(){
     if(!splashOpen&&!houseOpen&&!toastOpen)resumeTimer();
 }
 function quitGame(){
+    resetVisibleClasses();
     document.getElementById('quit-modal').style.display='none';
     stopTimer();
     document.getElementById('game-interface').style.display='none';
@@ -1715,6 +1894,22 @@ function renderLogbookEntries(roundFilter){
     <div style="padding:8px 16px 14px;background:var(--surface);border-top:1px solid var(--card-border);display:flex;align-items:center;justify-content:space-between;">
         <span style="font-size:0.7rem;color:var(--text-secondary);">&#9646; Timer paused</span>
         <span style="font-size:0.7rem;color:var(--text-secondary);font-weight:700;">Tap anywhere to continue</span>
+    </div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0c1424;z-index:15000;flex-direction:column;align-items:center;justify-content:center;gap:32px;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-size:2rem;font-weight:700;letter-spacing:0.16em;color:#f1f5f9;">ACUMEN</div>
+        <svg width="160" height="18" viewBox="0 0 160 18">
+            <polyline points="0,9 58,9 70,2 78,16 86,9 160,9" stroke="#d97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+    <div style="width:180px;display:flex;flex-direction:column;gap:8px;align-items:center;">
+        <div style="width:100%;height:3px;background:#1a2744;border-radius:2px;overflow:hidden;">
+            <div id="loading-bar" style="height:100%;width:0%;background:#d97706;border-radius:2px;transition:width 0.4s ease;"></div>
+        </div>
+        <div id="loading-status" style="font-size:0.72rem;color:#334155;">Preparing your rounds...</div>
     </div>
 </div>
 
